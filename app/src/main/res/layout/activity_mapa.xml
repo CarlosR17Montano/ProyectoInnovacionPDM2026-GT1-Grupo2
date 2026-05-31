@@ -11,7 +11,7 @@
         android:orientation="vertical"
         android:padding="24dp">
 
-        <!-- Titulo principal de la pantalla -->
+        <!-- Titulo principal de seguimiento -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
             android:layout_marginTop="28dp"
             android:layout_marginBottom="8dp" />
 
-        <!-- Subtitulo descriptivo -->
+        <!-- Descripcion breve -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,46 +34,15 @@
             android:gravity="center"
             android:layout_marginBottom="24dp" />
 
-        <!-- Tarjeta temporal donde luego ira Google Maps -->
-        <LinearLayout
+        <!-- Contenedor real de Google Maps -->
+        <fragment
+            android:id="@+id/mapaEntrega"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="260dp"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="@drawable/bg_card_login"
-            android:elevation="8dp"
-            android:padding="20dp"
-            android:layout_marginBottom="22dp">
+            android:layout_height="360dp"
+            android:layout_marginBottom="22dp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="📍"
-                android:textSize="58sp"
-                android:gravity="center"
-                android:layout_marginBottom="10dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Mapa en tiempo real"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="#333333"
-                android:gravity="center"
-                android:layout_marginBottom="8dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Aqui se integrara Google Maps API"
-                android:textSize="15sp"
-                android:textColor="#777777"
-                android:gravity="center" />
-
-        </LinearLayout>
-
-        <!-- Tarjeta con coordenadas de ejemplo -->
+        <!-- Tarjeta de datos GPS -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -83,42 +52,39 @@
             android:padding="20dp"
             android:layout_marginBottom="22dp">
 
+            <!-- Estado de ubicacion -->
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Datos de ubicacion"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#333333"
-                android:layout_marginBottom="12dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Latitud: 13.6420"
-                android:textSize="16sp"
-                android:textColor="#555555"
-                android:layout_marginBottom="6dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Longitud: -88.7853"
-                android:textSize="16sp"
-                android:textColor="#555555"
-                android:layout_marginBottom="6dp" />
-
-            <TextView
+                android:id="@+id/txtEstadoMapa"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Estado: Repartidor en ruta"
-                android:textSize="16sp"
+                android:textSize="17sp"
                 android:textStyle="bold"
-                android:textColor="#D81B60" />
+                android:textColor="#D81B60"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Latitud visible -->
+            <TextView
+                android:id="@+id/txtLatitudMapa"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Latitud: 13.6420"
+                android:textSize="15sp"
+                android:textColor="#555555"
+                android:layout_marginBottom="5dp" />
+
+            <!-- Longitud visible -->
+            <TextView
+                android:id="@+id/txtLongitudMapa"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Longitud: -88.7853"
+                android:textSize="15sp"
+                android:textColor="#555555" />
 
         </LinearLayout>
 
-        <!-- Boton para simular ubicacion -->
+        <!-- Boton para simular nueva ubicacion -->
         <Button
             android:id="@+id/btnSimularUbicacion"
             android:layout_width="match_parent"

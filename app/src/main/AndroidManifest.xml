@@ -4,6 +4,13 @@
     <!-- Permiso para usar la camara del dispositivo -->
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <!-- Permiso para usar internet y cargar el mapa -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Permisos para obtener ubicacion del dispositivo -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <!-- Indica que la app puede usar camara si el equipo tiene -->
     <uses-feature
         android:name="android.hardware.camera.any"
@@ -18,6 +25,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ProyectoInnovacionPDM2026GT1Grupo2">
+
+        <!-- API Key de Google Maps -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="TU_API_KEY_AQUI" />
 
         <activity android:name=".EvidenciaActivity" />
         <activity android:name=".ClienteActivity" />

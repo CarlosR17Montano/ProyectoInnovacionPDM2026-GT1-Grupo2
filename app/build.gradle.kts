@@ -52,4 +52,10 @@ dependencies {
 
     // Glide para mostrar imagenes guardadas o descargadas
     implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    // Google Maps para mostrar la ubicacion del repartidor
+    implementation("com.google.android.gms:play-services-maps:20.0.0")
+
+    // FragmentActivity para manejar SupportMapFragment de Google Maps
+    implementation("androidx.fragment:fragment-ktx:1.8.5")
 }
