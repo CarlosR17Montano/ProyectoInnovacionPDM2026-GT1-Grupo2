@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Boton para cliente -->
+    <solid android:color="#D81B60" />
+
+    <corners android:radius="24dp" />
+
+</shape>

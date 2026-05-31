@@ -1,19 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:fillViewport="true"
+    android:background="@drawable/bg_delivery_gradient">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="24dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Icono visual de entrega -->
+        <TextView
+            android:id="@+id/txtIconoEntrega"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:background="@drawable/bg_icon_circle"
+            android:gravity="center"
+            android:text="🛵"
+            android:textSize="44sp"
+            android:elevation="8dp"
+            android:layout_marginBottom="18dp" />
+
+        <!-- Nombre de la app -->
+        <TextView
+            android:id="@+id/txtTituloApp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="EntregaTrack"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:textColor="#D81B60"
+            android:gravity="center" />
+
+        <!-- Frase corta comercial -->
+        <TextView
+            android:id="@+id/txtSubtituloApp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tus pedidos, siempre en ruta"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textColor="#6A1B9A"
+            android:gravity="center"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="26dp" />
+
+        <!-- Tarjeta principal del login -->
+        <LinearLayout
+            android:id="@+id/cardLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_login"
+            android:elevation="10dp"
+            android:padding="22dp">
+
+            <!-- Texto interno de bienvenida -->
+            <TextView
+                android:id="@+id/txtBienvenida"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Iniciar sesión"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:gravity="center"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:id="@+id/txtDetalleLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Accede como cliente o repartidor"
+                android:textSize="14sp"
+                android:textColor="#777777"
+                android:gravity="center"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Campo correo -->
+            <EditText
+                android:id="@+id/edtCorreo"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:hint="Correo electrónico"
+                android:inputType="textEmailAddress"
+                android:singleLine="true"
+                android:background="@drawable/bg_input_delivery"
+                android:textColor="#333333"
+                android:textColorHint="#999999"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Campo contraseña -->
+            <EditText
+                android:id="@+id/edtContrasena"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:hint="Contraseña"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:background="@drawable/bg_input_delivery"
+                android:textColor="#333333"
+                android:textColorHint="#999999"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:layout_marginBottom="22dp" />
+
+            <!-- Boton principal -->
+            <Button
+                android:id="@+id/btnIngresar"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Ingresar"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/bg_button_pink"
+                android:elevation="5dp"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Separador visual -->
+            <TextView
+                android:id="@+id/txtSeparador"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Modo demostración"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#999999"
+                android:gravity="center"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Boton demo repartidor -->
+            <Button
+                android:id="@+id/btnDemoRepartidor"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Entrar como repartidor"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:background="@drawable/bg_button_yellow"
+                android:elevation="4dp"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Boton demo cliente -->
+            <Button
+                android:id="@+id/btnDemoCliente"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Entrar como cliente"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/bg_button_dark_pink"
+                android:elevation="4dp" />
+
+        </LinearLayout>
+
+        <!-- Texto inferior -->
+        <TextView
+            android:id="@+id/txtFooter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Seguimiento en tiempo real • Evidencia fotográfica • Ubicación GPS"
+            android:textSize="12sp"
+            android:textColor="#6A1B9A"
+            android:gravity="center"
+            android:layout_marginTop="22dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp" />
+
+    </LinearLayout>
+
+</ScrollView>

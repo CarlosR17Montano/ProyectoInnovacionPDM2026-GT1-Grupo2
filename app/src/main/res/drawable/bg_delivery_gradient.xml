@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Fondo general con estilo delivery -->
+    <gradient
+        android:startColor="#FFF3B0"
+        android:centerColor="#FFE4F1"
+        android:endColor="#FFD6E8"
+        android:angle="270" />
+
+</shape>

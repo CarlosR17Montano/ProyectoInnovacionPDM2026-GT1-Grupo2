@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@drawable/bg_delivery_gradient">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Encabezado -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🛵 Panel del Repartidor"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#D81B60"
+            android:gravity="center"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gestiona tus entregas asignadas"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#6A1B9A"
+            android:gravity="center"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Tarjeta del pedido -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_login"
+            android:elevation="8dp"
+            android:padding="22dp"
+            android:layout_marginBottom="22dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pedido asignado"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="14dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Código: PED-001"
+                android:textSize="16sp"
+                android:textColor="#555555"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cliente: Carlos Montano"
+                android:textSize="16sp"
+                android:textColor="#555555"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Dirección: San Vicente, El Salvador"
+                android:textSize="16sp"
+                android:textColor="#555555"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Estado: Pendiente de iniciar"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#D81B60" />
+
+        </LinearLayout>
+
+        <!-- Botones de acciones -->
+        <Button
+            android:id="@+id/btnIniciarEntrega"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Iniciar entrega"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_button_pink"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnActualizarUbicacion"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Actualizar ubicación GPS"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:background="@drawable/bg_button_yellow"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnTomarEvidencia"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Tomar foto de evidencia"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_button_dark_pink"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnFinalizarEntrega"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Finalizar entrega"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_button_pink" />
+
+    </LinearLayout>
+
+</ScrollView>

@@ -11,6 +11,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ProyectoInnovacionPDM2026GT1Grupo2">
+
+        <activity android:name=".ClienteActivity" />
+        <activity android:name=".RepartidorActivity" />
+
+
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@drawable/bg_delivery_gradient">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Encabezado -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📦 Seguimiento del Pedido"
+            android:textSize="27sp"
+            android:textStyle="bold"
+            android:textColor="#D81B60"
+            android:gravity="center"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Consulta el estado de tu entrega en tiempo real"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#6A1B9A"
+            android:gravity="center"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Tarjeta del pedido -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_login"
+            android:elevation="8dp"
+            android:padding="22dp"
+            android:layout_marginBottom="22dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tu pedido"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="14dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Código: PED-001"
+                android:textSize="16sp"
+                android:textColor="#555555"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Repartidor: Juan Pérez"
+                android:textSize="16sp"
+                android:textColor="#555555"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Estado actual: En preparación"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#D81B60"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Última actualización: hace unos segundos"
+                android:textSize="15sp"
+                android:textColor="#777777" />
+
+        </LinearLayout>
+
+        <!-- Simulación visual del mapa -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="190dp"
+            android:text="🗺️\nMapa de ubicación en tiempo real"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#6A1B9A"
+            android:gravity="center"
+            android:background="@drawable/bg_card_login"
+            android:elevation="8dp"
+            android:layout_marginBottom="22dp" />
+
+        <Button
+            android:id="@+id/btnVerUbicacion"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Ver ubicación del repartidor"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:background="@drawable/bg_button_yellow"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnVerEvidencia"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Ver evidencia de entrega"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_button_dark_pink" />
+
+    </LinearLayout>
+
+</ScrollView>
