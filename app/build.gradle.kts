@@ -44,4 +44,12 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+
+    // CameraX para vista previa y captura de fotografias
+    implementation("androidx.camera:camera-camera2:1.5.1")
+    implementation("androidx.camera:camera-lifecycle:1.5.1")
+    implementation("androidx.camera:camera-view:1.5.1")
+
+    // Glide para mostrar imagenes guardadas o descargadas
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 }

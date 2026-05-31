@@ -15,8 +15,9 @@ object DatosEntrega {
     var latitud: Double = 13.6420
     var longitud: Double = -88.7853
 
-    // Control temporal de evidencia
+    // Control temporal de evidencia fotográfica
     var evidenciaRegistrada: Boolean = false
+    var rutaFotoEvidencia: String = ""
 
     // Texto de última actualización
     var ultimaActualizacion: String = "Sin actualización reciente"
@@ -35,9 +36,15 @@ object DatosEntrega {
         ultimaActualizacion = "Ubicación GPS actualizada"
     }
 
-    // Marca que la evidencia fue registrada
-    fun registrarEvidencia() {
+    // Marca que la evidencia fue registrada y guarda la ruta de la foto
+    fun registrarEvidencia(rutaFoto: String = "") {
         evidenciaRegistrada = true
+
+        // Guarda la ruta solo si viene una foto válida
+        if (rutaFoto.isNotEmpty()) {
+            rutaFotoEvidencia = rutaFoto
+        }
+
         estadoPedido = "Evidencia registrada"
         ultimaActualizacion = "Fotografía de entrega registrada"
     }
