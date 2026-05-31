@@ -8,23 +8,23 @@ import androidx.activity.ComponentActivity
 
 class MapaActivity : ComponentActivity() {
 
-    // Pantalla temporal para preparar la integracion con Google Maps
+    // Pantalla temporal para preparar Google Maps y Firebase
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Colores de la barra superior e inferior
+        // Colores principales de la app
         window.statusBarColor = Color.parseColor("#D81B60")
         window.navigationBarColor = Color.parseColor("#FFF3B0")
 
-        // Carga el diseño de la pantalla de mapa
         setContentView(R.layout.activity_mapa)
 
         val btnSimularUbicacion = findViewById<Button>(R.id.btnSimularUbicacion)
         val btnVolverMapa = findViewById<Button>(R.id.btnVolverMapa)
 
-        // Luego este boton enviara coordenadas reales a Firebase
+        // Simula una actualización de ubicación GPS
         btnSimularUbicacion.setOnClickListener {
-            Toast.makeText(this, "Ubicacion GPS simulada correctamente", Toast.LENGTH_SHORT).show()
+            DatosEntrega.actualizarUbicacion()
+            Toast.makeText(this, "Ubicación GPS simulada correctamente", Toast.LENGTH_SHORT).show()
         }
 
         // Regresa a la pantalla anterior

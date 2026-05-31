@@ -77,9 +77,9 @@
                 android:layout_marginBottom="6dp" />
 
             <TextView
+                android:id="@+id/txtEstadoRepartidor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Estado: Pendiente de iniciar"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#D81B60" />

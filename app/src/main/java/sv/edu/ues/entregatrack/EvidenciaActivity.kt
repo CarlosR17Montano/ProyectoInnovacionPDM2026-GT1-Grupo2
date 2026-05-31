@@ -16,7 +16,6 @@ class EvidenciaActivity : ComponentActivity() {
         window.statusBarColor = Color.parseColor("#D81B60")
         window.navigationBarColor = Color.parseColor("#FFF3B0")
 
-        // Carga el diseño de evidencia
         setContentView(R.layout.activity_evidencia)
 
         val btnTomarFoto = findViewById<Button>(R.id.btnTomarFoto)
@@ -28,8 +27,9 @@ class EvidenciaActivity : ComponentActivity() {
             Toast.makeText(this, "Aqui se abrira CameraX para tomar la foto", Toast.LENGTH_SHORT).show()
         }
 
-        // Luego este boton guardara la evidencia en la base de datos o Firebase
+        // Simula el guardado de la evidencia fotografica
         btnGuardarEvidencia.setOnClickListener {
+            DatosEntrega.registrarEvidencia()
             Toast.makeText(this, "Evidencia registrada correctamente", Toast.LENGTH_SHORT).show()
         }
 

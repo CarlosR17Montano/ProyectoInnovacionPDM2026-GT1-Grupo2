@@ -71,16 +71,16 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Estado actual: En preparación"
+                android:id="@+id/txtEstadoCliente"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#D81B60"
                 android:layout_marginBottom="6dp" />
 
             <TextView
+                android:id="@+id/txtUltimaActualizacionCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Última actualización: hace unos segundos"
                 android:textSize="15sp"
                 android:textColor="#777777" />
 
