@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import android.content.Intent
 
 class RepartidorActivity : ComponentActivity() {
 
@@ -26,8 +27,10 @@ class RepartidorActivity : ComponentActivity() {
             Toast.makeText(this, "Entrega iniciada", Toast.LENGTH_SHORT).show()
         }
 
+        // Abre la pantalla donde luego se integrara Google Maps
         btnActualizarUbicacion.setOnClickListener {
-            Toast.makeText(this, "Ubicación actualizada en tiempo real", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, MapaActivity::class.java)
+            startActivity(intent)
         }
 
         btnTomarEvidencia.setOnClickListener {

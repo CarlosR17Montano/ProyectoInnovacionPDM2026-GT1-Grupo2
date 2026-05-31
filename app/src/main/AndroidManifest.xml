@@ -14,7 +14,7 @@
 
         <activity android:name=".ClienteActivity" />
         <activity android:name=".RepartidorActivity" />
-
+        <activity android:name=".MapaActivity" />
 
 
         <activity

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import android.content.Intent
 
 class ClienteActivity : ComponentActivity() {
 
@@ -20,8 +21,10 @@ class ClienteActivity : ComponentActivity() {
         val btnVerUbicacion = findViewById<Button>(R.id.btnVerUbicacion)
         val btnVerEvidencia = findViewById<Button>(R.id.btnVerEvidencia)
 
+        // Abre la pantalla de seguimiento GPS
         btnVerUbicacion.setOnClickListener {
-            Toast.makeText(this, "Aquí se mostrará Google Maps", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, MapaActivity::class.java)
+            startActivity(intent)
         }
 
         btnVerEvidencia.setOnClickListener {
