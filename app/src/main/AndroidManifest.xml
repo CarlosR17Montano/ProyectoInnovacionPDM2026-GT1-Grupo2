@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProyectoInnovacionPDM2026GT1Grupo2">
 
+        <activity android:name=".EvidenciaActivity" />
         <activity android:name=".ClienteActivity" />
         <activity android:name=".RepartidorActivity" />
         <activity android:name=".MapaActivity" />

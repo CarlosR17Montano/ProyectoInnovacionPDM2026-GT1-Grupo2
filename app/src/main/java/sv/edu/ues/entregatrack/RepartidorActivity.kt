@@ -33,8 +33,10 @@ class RepartidorActivity : ComponentActivity() {
             startActivity(intent)
         }
 
+        // Abre la pantalla temporal de evidencia fotografica
         btnTomarEvidencia.setOnClickListener {
-            Toast.makeText(this, "Aquí se abrirá CameraX", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, EvidenciaActivity::class.java)
+            startActivity(intent)
         }
 
         btnFinalizarEntrega.setOnClickListener {

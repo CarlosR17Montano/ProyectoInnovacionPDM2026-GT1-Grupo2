@@ -27,8 +27,10 @@ class ClienteActivity : ComponentActivity() {
             startActivity(intent)
         }
 
+        // Abre la pantalla donde luego se mostrara la evidencia con Glide
         btnVerEvidencia.setOnClickListener {
-            Toast.makeText(this, "Aquí se mostrará la evidencia con Glide", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, EvidenciaActivity::class.java)
+            startActivity(intent)
         }
     }
 }
