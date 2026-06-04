@@ -2,27 +2,32 @@ package sv.edu.ues.entregatrack
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
-import com.google.android.gms.dynamic.IFragmentWrapper
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.database.ValueEventListener
 
 class MapaActivity : FragmentActivity(), OnMapReadyCallback {
 
     private var googleMap: GoogleMap? = null
+    private var listenerFirebase: ValueEventListener? = null
 
     private lateinit var txtEstadoMapa: TextView
     private lateinit var txtLatitudMapa: TextView
     private lateinit var txtLongitudMapa: TextView
+    private lateinit var btnSimularUbicacion: Button
 
-    // Pantalla de seguimiento GPS con Google Maps
+    private var modoPantalla: String = "cliente"
+
+    // Pantalla de seguimiento GPS con Google Maps y Firebase
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -35,22 +40,43 @@ class MapaActivity : FragmentActivity(), OnMapReadyCallback {
         txtEstadoMapa = findViewById(R.id.txtEstadoMapa)
         txtLatitudMapa = findViewById(R.id.txtLatitudMapa)
         txtLongitudMapa = findViewById(R.id.txtLongitudMapa)
+        btnSimularUbicacion = findViewById(R.id.btnSimularUbicacion)
 
-        val btnSimularUbicacion = findViewById<Button>(R.id.btnSimularUbicacion)
         val btnVolverMapa = findViewById<Button>(R.id.btnVolverMapa)
+
+        // Recibe si la pantalla se abre como cliente o repartidor
+        modoPantalla = intent.getStringExtra("modo") ?: "cliente"
+
+        // El cliente solo visualiza; el repartidor actualiza
+        if (modoPantalla == "cliente") {
+            btnSimularUbicacion.visibility = View.GONE
+        } else {
+            btnSimularUbicacion.visibility = View.VISIBLE
+        }
 
         // Carga el fragmento de Google Maps
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.mapaEntrega) as SupportMapFragment
+
         mapFragment.getMapAsync(this)
 
-        // Simula una nueva ubicacion del repartidor
+        // Simula nueva ubicacion y la guarda en Firebase
+        // Simula nueva ubicacion y la guarda en Firebase
         btnSimularUbicacion.setOnClickListener {
-            DatosEntrega.actualizarUbicacion()
-            actualizarDatosMapa()
-            moverMarcadorRepartidor()
+            Toast.makeText(this, "Intentando guardar en Firebase...", Toast.LENGTH_SHORT).show()
 
-            Toast.makeText(this, "Ubicacion GPS actualizada", Toast.LENGTH_SHORT).show()
+            DatosEntrega.actualizarUbicacion()
+
+            FirebaseEntregaHelper.guardarUbicacionPedido(
+                onSuccess = {
+                    actualizarDatosMapa()
+                    moverMarcadorRepartidor()
+                    Toast.makeText(this, "Ubicacion guardada en Firebase", Toast.LENGTH_SHORT).show()
+                },
+                onError = { mensaje ->
+                    Toast.makeText(this, "Error Firebase: $mensaje", Toast.LENGTH_LONG).show()
+                }
+            )
         }
 
         // Regresa a la pantalla anterior
@@ -59,6 +85,7 @@ class MapaActivity : FragmentActivity(), OnMapReadyCallback {
         }
 
         actualizarDatosMapa()
+        iniciarEscuchaFirebase()
     }
 
     // Se ejecuta cuando Google Maps ya esta listo
@@ -67,6 +94,25 @@ class MapaActivity : FragmentActivity(), OnMapReadyCallback {
 
         // Muestra el marcador inicial del repartidor
         moverMarcadorRepartidor()
+    }
+
+    // Escucha cambios de Firebase en tiempo real
+    private fun iniciarEscuchaFirebase() {
+        listenerFirebase = FirebaseEntregaHelper.escucharUbicacionPedido(
+            onChange = { datos ->
+                DatosEntrega.estadoPedido = datos.estadoPedido
+                DatosEntrega.latitud = datos.latitud
+                DatosEntrega.longitud = datos.longitud
+                DatosEntrega.ultimaActualizacion = datos.ultimaActualizacion
+                DatosEntrega.evidenciaRegistrada = datos.evidenciaRegistrada
+
+                actualizarDatosMapa()
+                moverMarcadorRepartidor()
+            },
+            onError = { mensaje ->
+                Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+            }
+        )
     }
 
     // Actualiza los textos de ubicacion
@@ -94,5 +140,11 @@ class MapaActivity : FragmentActivity(), OnMapReadyCallback {
         mapa.moveCamera(
             CameraUpdateFactory.newLatLngZoom(ubicacionRepartidor, 16f)
         )
+    }
+
+    // Detiene la escucha al cerrar la pantalla
+    override fun onDestroy() {
+        super.onDestroy()
+        FirebaseEntregaHelper.detenerEscuchaPedido(listenerFirebase)
     }
 }

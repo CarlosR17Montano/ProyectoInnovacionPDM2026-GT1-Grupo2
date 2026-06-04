@@ -32,8 +32,10 @@ class ClienteActivity : ComponentActivity() {
         actualizarDatosPedido()
 
         // Abre la pantalla de seguimiento GPS
+        // Abre la pantalla de mapa en modo cliente
         btnVerUbicacion.setOnClickListener {
             val intent = Intent(this, MapaActivity::class.java)
+            intent.putExtra("modo", "cliente")
             startActivity(intent)
         }
 

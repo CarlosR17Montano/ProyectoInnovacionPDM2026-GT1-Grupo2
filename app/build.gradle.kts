@@ -2,6 +2,7 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.google.services)
 }
 
 // Lee la API Key desde local.properties para no subirla a GitHub
@@ -76,4 +77,8 @@ dependencies {
 
     // FragmentActivity para manejar SupportMapFragment de Google Maps
     implementation("androidx.fragment:fragment-ktx:1.8.5")
+
+    // Firebase Realtime Database para datos en tiempo real
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.database)
 }

@@ -32,16 +32,25 @@ class RepartidorActivity : ComponentActivity() {
         // Muestra el estado actual al abrir la pantalla
         actualizarEstadoPantalla()
 
-        // Inicia la entrega de prueba
+        // Inicia la entrega y sincroniza el estado en Firebase
         btnIniciarEntrega.setOnClickListener {
             DatosEntrega.iniciarEntrega()
             actualizarEstadoPantalla()
-            Toast.makeText(this, "Entrega iniciada", Toast.LENGTH_SHORT).show()
+
+            FirebaseEntregaHelper.guardarUbicacionPedido(
+                onSuccess = {
+                    Toast.makeText(this, "Entrega iniciada y sincronizada", Toast.LENGTH_SHORT).show()
+                },
+                onError = { mensaje ->
+                    Toast.makeText(this, "Error Firebase: $mensaje", Toast.LENGTH_LONG).show()
+                }
+            )
         }
 
-        // Abre la pantalla del mapa GPS
+        // Abre el mapa en modo repartidor
         btnActualizarUbicacion.setOnClickListener {
             val intent = Intent(this, MapaActivity::class.java)
+            intent.putExtra("modo", "repartidor")
             startActivity(intent)
         }
 
@@ -51,11 +60,19 @@ class RepartidorActivity : ComponentActivity() {
             startActivity(intent)
         }
 
-        // Finaliza la entrega de prueba
+        // Finaliza la entrega y sincroniza el estado en Firebase
         btnFinalizarEntrega.setOnClickListener {
             DatosEntrega.finalizarEntrega()
             actualizarEstadoPantalla()
-            Toast.makeText(this, "Entrega finalizada correctamente", Toast.LENGTH_SHORT).show()
+
+            FirebaseEntregaHelper.guardarUbicacionPedido(
+                onSuccess = {
+                    Toast.makeText(this, "Entrega finalizada y sincronizada", Toast.LENGTH_SHORT).show()
+                },
+                onError = { mensaje ->
+                    Toast.makeText(this, "Error Firebase: $mensaje", Toast.LENGTH_LONG).show()
+                }
+            )
         }
     }
 
@@ -67,6 +84,7 @@ class RepartidorActivity : ComponentActivity() {
     // Actualiza el estado al regresar desde otra pantalla
     override fun onResume() {
         super.onResume()
+
         if (::txtEstadoRepartidor.isInitialized) {
             actualizarEstadoPantalla()
         }

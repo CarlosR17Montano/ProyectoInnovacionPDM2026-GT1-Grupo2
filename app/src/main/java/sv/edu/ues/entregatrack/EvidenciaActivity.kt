@@ -192,25 +192,33 @@ class EvidenciaActivity : ComponentActivity() {
         txtRutaFoto.text = "Foto: lista para nueva captura"
     }
 
-    // Valida que exista foto y confirma la evidencia
+    // Valida que exista foto y confirma la evidencia en Firebase
     private fun guardarEvidencia() {
         if (DatosEntrega.rutaFotoEvidencia.isEmpty()) {
             Toast.makeText(this, "Primero toma una fotografia", Toast.LENGTH_SHORT).show()
             return
         }
 
+        // Registra evidencia localmente
         DatosEntrega.registrarEvidencia(DatosEntrega.rutaFotoEvidencia)
         actualizarTextoEvidencia()
         mostrarFotoConGlide(DatosEntrega.rutaFotoEvidencia)
 
-        Toast.makeText(this, "Evidencia guardada correctamente", Toast.LENGTH_SHORT).show()
+        // Sincroniza evidencia con Firebase
+        FirebaseEntregaHelper.guardarUbicacionPedido(
+            onSuccess = {
+                Toast.makeText(this, "Evidencia guardada en Firebase", Toast.LENGTH_SHORT).show()
+            },
+            onError = { mensaje ->
+                Toast.makeText(this, "Error Firebase: $mensaje", Toast.LENGTH_LONG).show()
+            }
+        )
     }
 
     // Muestra la foto guardada usando Glide
     private fun mostrarFotoConGlide(rutaFoto: String) {
         fotoMostrada = true
 
-        // Oculta la camara para mostrar solo la evidencia tomada
         previewCamara.visibility = View.GONE
         imgEvidencia.visibility = View.VISIBLE
 
