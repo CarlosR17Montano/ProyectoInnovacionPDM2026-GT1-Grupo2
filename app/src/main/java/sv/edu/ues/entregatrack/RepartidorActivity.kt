@@ -54,9 +54,10 @@ class RepartidorActivity : ComponentActivity() {
             startActivity(intent)
         }
 
-        // Abre la pantalla de evidencia fotografica
+        // Abre la evidencia en modo repartidor
         btnTomarEvidencia.setOnClickListener {
             val intent = Intent(this, EvidenciaActivity::class.java)
+            intent.putExtra("modo", "repartidor")
             startActivity(intent)
         }
 

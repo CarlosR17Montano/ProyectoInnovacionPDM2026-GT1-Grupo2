@@ -105,6 +105,7 @@ class MapaActivity : FragmentActivity(), OnMapReadyCallback {
                 DatosEntrega.longitud = datos.longitud
                 DatosEntrega.ultimaActualizacion = datos.ultimaActualizacion
                 DatosEntrega.evidenciaRegistrada = datos.evidenciaRegistrada
+                DatosEntrega.rutaFotoEvidencia = datos.rutaFotoEvidencia
 
                 actualizarDatosMapa()
                 moverMarcadorRepartidor()

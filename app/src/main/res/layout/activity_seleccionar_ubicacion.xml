@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_delivery_gradient"
+    android:padding="16dp">
+
+    <!-- Título -->
+    <TextView
+        android:id="@+id/txtTituloSelectorUbicacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Seleccionar ubicación"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#D81B60"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="10dp" />
+
+    <!-- Campo de búsqueda -->
+    <EditText
+        android:id="@+id/edtBuscarDireccionMapa"
+        style="@style/EntregaTrackInput"
+        android:hint="Escribe un lugar, negocio o dirección"
+        android:inputType="text"
+        android:singleLine="true" />
+
+    <!-- Botón buscar -->
+    <Button
+        android:id="@+id/btnBuscarDireccionMapa"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="Buscar en mapa"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#333333"
+        android:background="@drawable/bg_button_yellow"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Botón ubicación actual -->
+    <Button
+        android:id="@+id/btnUsarMiUbicacionMapa"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="Usar mi ubicación actual"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/bg_button_pink"
+        android:layout_marginBottom="10dp" />
+
+    <!-- Mapa interno -->
+    <fragment
+        android:id="@+id/mapSeleccionUbicacion"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="10dp" />
+
+    <!-- Dirección seleccionada -->
+    <TextView
+        android:id="@+id/txtDireccionSeleccionada"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Toca el mapa o busca una dirección"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:background="@drawable/bg_input_accesible"
+        android:padding="12dp"
+        android:layout_marginBottom="10dp" />
+
+    <!-- Botón confirmar -->
+    <Button
+        android:id="@+id/btnConfirmarUbicacion"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Confirmar ubicación"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/bg_button_dark_pink" />
+
+</LinearLayout>

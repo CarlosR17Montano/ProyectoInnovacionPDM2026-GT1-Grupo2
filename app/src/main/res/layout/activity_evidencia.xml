@@ -11,46 +11,46 @@
         android:orientation="vertical"
         android:padding="24dp">
 
-        <!-- Titulo principal de evidencia -->
+        <!-- Título principal de evidencia -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="📸 Evidencia de Entrega"
-            android:textSize="27sp"
+            android:text="📸 Evidencia de entrega"
+            android:textSize="30sp"
             android:textStyle="bold"
             android:textColor="#D81B60"
             android:gravity="center"
             android:layout_marginTop="28dp"
             android:layout_marginBottom="8dp" />
 
-        <!-- Descripcion breve -->
+        <!-- Descripción breve -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Captura fotografica del pedido entregado"
-            android:textSize="16sp"
+            android:text="Captura fotográfica del pedido entregado"
+            android:textSize="17sp"
             android:textStyle="bold"
-            android:textColor="#6A1B9A"
+            android:textColor="#4A148C"
             android:gravity="center"
             android:layout_marginBottom="24dp" />
 
-        <!-- Vista previa real de la camara con CameraX -->
+        <!-- Vista previa real de la cámara con CameraX -->
         <androidx.camera.view.PreviewView
             android:id="@+id/previewCamara"
             android:layout_width="match_parent"
             android:layout_height="360dp"
-            android:background="@drawable/bg_card_login"
+            android:background="@drawable/bg_input_accesible"
             android:elevation="8dp"
             android:layout_marginBottom="22dp" />
 
-        <!-- Vista donde se mostrara la foto tomada usando Glide -->
+        <!-- Vista donde se mostrará la foto tomada usando Glide -->
         <ImageView
             android:id="@+id/imgEvidencia"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
+            android:layout_height="240dp"
             android:scaleType="centerCrop"
             android:visibility="gone"
-            android:background="@drawable/bg_card_login"
+            android:background="@drawable/bg_input_accesible"
             android:elevation="8dp"
             android:contentDescription="Foto de evidencia de entrega"
             android:layout_marginBottom="22dp" />
@@ -71,10 +71,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Estado: Pendiente de evidencia"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#D81B60"
-                android:layout_marginBottom="6dp" />
+                android:layout_marginBottom="10dp" />
 
             <!-- Resultado de foto tomada -->
             <TextView
@@ -82,12 +82,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Foto: No registrada"
-                android:textSize="14sp"
-                android:textColor="#777777" />
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:background="@drawable/bg_input_accesible"
+                android:padding="12dp" />
 
         </LinearLayout>
 
-        <!-- Boton para capturar foto -->
+        <!-- Botón para capturar foto -->
         <Button
             android:id="@+id/btnTomarFoto"
             android:layout_width="match_parent"
@@ -99,7 +102,7 @@
             android:background="@drawable/bg_button_yellow"
             android:layout_marginBottom="12dp" />
 
-        <!-- Boton para guardar evidencia -->
+        <!-- Botón para guardar evidencia -->
         <Button
             android:id="@+id/btnGuardarEvidencia"
             android:layout_width="match_parent"
@@ -111,7 +114,7 @@
             android:background="@drawable/bg_button_pink"
             android:layout_marginBottom="12dp" />
 
-        <!-- Boton para regresar -->
+        <!-- Botón para regresar -->
         <Button
             android:id="@+id/btnVolverEvidencia"
             android:layout_width="match_parent"

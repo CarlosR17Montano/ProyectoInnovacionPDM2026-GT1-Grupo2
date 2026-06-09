@@ -12,7 +12,8 @@ data class UbicacionPedidoFirebase(
     var latitud: Double = 0.0,
     var longitud: Double = 0.0,
     var ultimaActualizacion: String = "",
-    var evidenciaRegistrada: Boolean = false
+    var evidenciaRegistrada: Boolean = false,
+    var rutaFotoEvidencia: String = ""
 )
 
 object FirebaseEntregaHelper {
@@ -31,7 +32,8 @@ object FirebaseEntregaHelper {
             latitud = DatosEntrega.latitud,
             longitud = DatosEntrega.longitud,
             ultimaActualizacion = DatosEntrega.ultimaActualizacion,
-            evidenciaRegistrada = DatosEntrega.evidenciaRegistrada
+            evidenciaRegistrada = DatosEntrega.evidenciaRegistrada,
+            rutaFotoEvidencia = DatosEntrega.rutaFotoEvidencia
         )
 
         database

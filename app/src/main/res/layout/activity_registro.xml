@@ -12,30 +12,30 @@
         android:padding="24dp"
         android:gravity="center_horizontal">
 
-        <!-- Título principal de la app -->
+        <!-- Título principal -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="EntregaTrack"
-            android:textSize="38sp"
+            android:text="Crear cuenta"
+            android:textSize="34sp"
             android:textStyle="bold"
             android:textColor="#D81B60"
             android:gravity="center"
-            android:layout_marginTop="70dp"
+            android:layout_marginTop="40dp"
             android:layout_marginBottom="8dp" />
 
         <!-- Subtítulo -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Seguimiento de entregas en tiempo real"
+            android:text="Regístrate como cliente o repartidor"
             android:textSize="17sp"
             android:textStyle="bold"
             android:textColor="#4A148C"
             android:gravity="center"
-            android:layout_marginBottom="32dp" />
+            android:layout_marginBottom="28dp" />
 
-        <!-- Tarjeta de inicio de sesión -->
+        <!-- Tarjeta del formulario -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,48 +45,74 @@
             android:padding="20dp"
             android:layout_marginBottom="22dp">
 
-            <!-- Correo del usuario -->
+            <!-- Nombre completo -->
             <EditText
-                android:id="@+id/edtCorreoLogin"
+                android:id="@+id/edtNombreRegistro"
+                style="@style/EntregaTrackInput"
+                android:hint="Nombre completo"
+                android:inputType="textPersonName"
+                android:singleLine="true" />
+
+            <!-- Correo electrónico -->
+            <EditText
+                android:id="@+id/edtCorreoRegistro"
                 style="@style/EntregaTrackInput"
                 android:hint="Correo electrónico"
                 android:inputType="textEmailAddress"
                 android:singleLine="true" />
 
-            <!-- Contraseña del usuario -->
+            <!-- Teléfono -->
             <EditText
-                android:id="@+id/edtPasswordLogin"
+                android:id="@+id/edtTelefonoRegistro"
+                style="@style/EntregaTrackInput"
+                android:hint="Teléfono. Ejemplo: 7696-3351"
+                android:inputType="phone"
+                android:maxLength="9"
+                android:singleLine="true" />
+
+            <!-- Contraseña -->
+            <EditText
+                android:id="@+id/edtPasswordRegistro"
                 style="@style/EntregaTrackInput"
                 android:hint="Contraseña"
                 android:inputType="textPassword"
                 android:singleLine="true" />
 
+            <!-- Rol del usuario -->
+            <Spinner
+                android:id="@+id/spinnerRolRegistro"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_input_accesible"
+                android:padding="12dp"
+                android:layout_marginBottom="4dp" />
+
         </LinearLayout>
 
-        <!-- Botón iniciar sesión -->
+        <!-- Botón guardar registro -->
         <Button
-            android:id="@+id/btnIniciarSesion"
+            android:id="@+id/btnGuardarRegistro"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Iniciar sesión"
-            android:textAllCaps="false"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:textColor="#333333"
-            android:background="@drawable/bg_button_yellow"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Botón crear cuenta -->
-        <Button
-            android:id="@+id/btnCrearCuenta"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Crear cuenta"
+            android:text="Registrarme"
             android:textAllCaps="false"
             android:textStyle="bold"
             android:textSize="16sp"
             android:textColor="#FFFFFF"
-            android:background="@drawable/bg_button_pink" />
+            android:background="@drawable/bg_button_pink"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Botón volver -->
+        <Button
+            android:id="@+id/btnVolverRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Volver al login"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_button_dark_pink" />
 
     </LinearLayout>
 

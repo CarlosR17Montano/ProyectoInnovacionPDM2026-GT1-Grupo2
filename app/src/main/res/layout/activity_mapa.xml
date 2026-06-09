@@ -11,26 +11,26 @@
         android:orientation="vertical"
         android:padding="24dp">
 
-        <!-- Titulo principal de seguimiento -->
+        <!-- Título principal de seguimiento -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="🗺️ Seguimiento GPS"
-            android:textSize="28sp"
+            android:textSize="30sp"
             android:textStyle="bold"
             android:textColor="#D81B60"
             android:gravity="center"
             android:layout_marginTop="28dp"
             android:layout_marginBottom="8dp" />
 
-        <!-- Descripcion breve -->
+        <!-- Descripción breve -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ubicacion actual del repartidor"
-            android:textSize="16sp"
+            android:text="Ubicación actual del repartidor"
+            android:textSize="17sp"
             android:textStyle="bold"
-            android:textColor="#6A1B9A"
+            android:textColor="#4A148C"
             android:gravity="center"
             android:layout_marginBottom="24dp" />
 
@@ -39,7 +39,7 @@
             android:id="@+id/mapaEntrega"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="360dp"
+            android:layout_height="390dp"
             android:layout_marginBottom="22dp" />
 
         <!-- Tarjeta de datos GPS -->
@@ -52,16 +52,16 @@
             android:padding="20dp"
             android:layout_marginBottom="22dp">
 
-            <!-- Estado de ubicacion -->
+            <!-- Estado de ubicación -->
             <TextView
                 android:id="@+id/txtEstadoMapa"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Estado: Repartidor en ruta"
-                android:textSize="17sp"
+                android:textSize="19sp"
                 android:textStyle="bold"
                 android:textColor="#D81B60"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="10dp" />
 
             <!-- Latitud visible -->
             <TextView
@@ -69,9 +69,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Latitud: 13.6420"
-                android:textSize="15sp"
-                android:textColor="#555555"
-                android:layout_marginBottom="5dp" />
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:background="@drawable/bg_input_accesible"
+                android:padding="10dp"
+                android:layout_marginBottom="8dp" />
 
             <!-- Longitud visible -->
             <TextView
@@ -79,24 +82,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Longitud: -88.7853"
-                android:textSize="15sp"
-                android:textColor="#555555" />
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:background="@drawable/bg_input_accesible"
+                android:padding="10dp" />
 
         </LinearLayout>
 
-        <!-- Boton para simular nueva ubicacion -->
+        <!-- Botón para simular nueva ubicación -->
         <Button
             android:id="@+id/btnSimularUbicacion"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Simular actualizacion GPS"
+            android:text="Actualizar ubicación GPS"
             android:textAllCaps="false"
             android:textStyle="bold"
+            android:textSize="16sp"
             android:textColor="#333333"
             android:background="@drawable/bg_button_yellow"
             android:layout_marginBottom="12dp" />
 
-        <!-- Boton para regresar -->
+        <!-- Botón para regresar -->
         <Button
             android:id="@+id/btnVolverMapa"
             android:layout_width="match_parent"
@@ -104,6 +111,7 @@
             android:text="Volver"
             android:textAllCaps="false"
             android:textStyle="bold"
+            android:textSize="16sp"
             android:textColor="#FFFFFF"
             android:background="@drawable/bg_button_dark_pink" />
 

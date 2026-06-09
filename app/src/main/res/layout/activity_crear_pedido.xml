@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@drawable/bg_delivery_gradient">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Solicitar mandado"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:textColor="#D81B60"
+            android:gravity="center"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Completa los datos para el repartidor"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textColor="#4A148C"
+            android:gravity="center"
+            android:layout_marginBottom="24dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_login"
+            android:elevation="8dp"
+            android:padding="20dp"
+            android:layout_marginBottom="22dp">
+
+            <Spinner
+                android:id="@+id/spinnerTipoServicio"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_input_accesible"
+                android:padding="12dp"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/edtDireccionRecogida"
+                style="@style/EntregaTrackInput"
+                android:hint="Lugar donde debe recoger o comprar"
+                android:inputType="textPostalAddress" />
+
+            <Button
+                android:id="@+id/btnSeleccionarRecogidaMapa"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Seleccionar recogida en mapa"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:background="@drawable/bg_button_yellow"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/btnUsarUbicacionActual"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Usar mi ubicación actual"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/bg_button_pink"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/txtUbicacionActualCliente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ubicación actual: no capturada"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/edtDireccionEntrega"
+                style="@style/EntregaTrackInput"
+                android:hint="Lugar donde debe entregar"
+                android:inputType="textPostalAddress" />
+
+            <Button
+                android:id="@+id/btnSeleccionarEntregaMapa"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Seleccionar entrega en mapa"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:background="@drawable/bg_button_yellow"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/edtTelefonoPedido"
+                style="@style/EntregaTrackInput"
+                android:hint="Teléfono. Ejemplo: 7555-3351"
+                android:inputType="phone"
+                android:maxLength="9" />
+
+            <EditText
+                android:id="@+id/edtReferenciaPedido"
+                style="@style/EntregaTrackInput"
+                android:hint="Referencia de ubicación"
+                android:inputType="text" />
+
+            <EditText
+                android:id="@+id/edtDescripcionPedido"
+                style="@style/EntregaTrackInputMultiline"
+                android:hint="¿Qué debe hacer el repartidor?"
+                android:inputType="textMultiLine" />
+
+            <EditText
+                android:id="@+id/edtIndicacionesRepartidor"
+                style="@style/EntregaTrackInputMultiline"
+                android:hint="Indicaciones especiales: QR, receta, código de retiro, nombre autorizado, documento, etc."
+                android:inputType="textMultiLine" />
+
+            <TextView
+                android:id="@+id/txtEstadoAnexoCliente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Anexo del pedido: no agregado"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#4A148C"
+                android:gravity="center"
+                android:layout_marginBottom="8dp" />
+
+            <ImageView
+                android:id="@+id/imgAnexoCliente"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/bg_input_accesible"
+                android:contentDescription="Vista previa del anexo"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/btnSeleccionarAnexoCliente"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Seleccionar QR o imagen"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:background="@drawable/bg_button_yellow"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/btnTomarFotoAnexoCliente"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Tomar foto del anexo"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/bg_button_pink"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Campo oculto para guardar la distancia numérica -->
+            <EditText
+                android:id="@+id/edtDistanciaKm"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                android:inputType="numberDecimal" />
+
+            <TextView
+                android:id="@+id/txtDistanciaCalculada"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Distancia estimada: pendiente de calcular"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:gravity="center"
+                android:padding="12dp"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/btnCalcularPrecio"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Calcular precio estimado"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:background="@drawable/bg_button_yellow"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/txtPrecioEstimado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Total estimado del servicio: $0.00"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#D81B60"
+                android:gravity="center"
+                android:background="@drawable/bg_input_accesible"
+                android:padding="12dp"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnGuardarPedido"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Guardar solicitud"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_button_pink"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnVolverCrearPedido"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Volver"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_button_dark_pink" />
+
+    </LinearLayout>
+
+</ScrollView>

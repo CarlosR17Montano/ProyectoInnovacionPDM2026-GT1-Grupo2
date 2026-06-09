@@ -81,4 +81,13 @@ dependencies {
     // Firebase Realtime Database para datos en tiempo real
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.database)
+
+    // Firebase Authentication para login y registro real
+    implementation(libs.firebase.auth)
+
+    // Ubicación actual del cliente/repartidor
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+
+    // Firebase Storage para subir anexos, QR o imágenes del pedido
+    implementation(libs.firebase.storage)
 }

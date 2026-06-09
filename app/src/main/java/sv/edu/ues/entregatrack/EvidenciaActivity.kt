@@ -32,7 +32,11 @@ class EvidenciaActivity : ComponentActivity() {
     private lateinit var btnGuardarEvidencia: Button
 
     private var imageCapture: ImageCapture? = null
+    private var cameraProvider: ProcessCameraProvider? = null
     private var fotoMostrada: Boolean = false
+
+    // Controla si la pantalla se abre como repartidor o cliente
+    private var modoPantalla: String = "repartidor"
 
     // Solicita permiso de camara al usuario
     private val solicitarPermisoCamara =
@@ -44,7 +48,7 @@ class EvidenciaActivity : ComponentActivity() {
             }
         }
 
-    // Pantalla para tomar y mostrar evidencia fotografica
+    // Pantalla para tomar o visualizar evidencia fotografica
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -63,21 +67,14 @@ class EvidenciaActivity : ComponentActivity() {
 
         val btnVolverEvidencia = findViewById<Button>(R.id.btnVolverEvidencia)
 
-        // Verifica permiso antes de abrir la camara
-        verificarPermisoCamara()
+        // Recibe si la pantalla se abre como cliente o repartidor
+        modoPantalla = intent.getStringExtra("modo") ?: "repartidor"
 
-        // Toma foto o permite tomar una nueva
-        btnTomarFoto.setOnClickListener {
-            if (fotoMostrada) {
-                prepararNuevaFoto()
-            } else {
-                tomarFoto()
-            }
-        }
-
-        // Confirma la evidencia tomada
-        btnGuardarEvidencia.setOnClickListener {
-            guardarEvidencia()
+        // Configura la pantalla segun el rol
+        if (modoPantalla == "cliente") {
+            configurarModoCliente()
+        } else {
+            configurarModoRepartidor()
         }
 
         // Regresa a la pantalla anterior
@@ -87,6 +84,44 @@ class EvidenciaActivity : ComponentActivity() {
 
         actualizarTextoEvidencia()
         mostrarFotoSiExiste()
+    }
+
+    // Configura la pantalla para que el cliente solo visualice la evidencia
+    // Configura la pantalla para que el cliente solo visualice la evidencia
+    private fun configurarModoCliente() {
+        previewCamara.visibility = View.GONE
+        btnTomarFoto.visibility = View.GONE
+        btnGuardarEvidencia.visibility = View.GONE
+
+        if (DatosEntrega.evidenciaRegistrada && DatosEntrega.rutaFotoEvidencia.isNotEmpty()) {
+            txtRutaFoto.text = "Evidencia registrada correctamente"
+            mostrarFotoConGlide(DatosEntrega.rutaFotoEvidencia)
+        } else if (DatosEntrega.evidenciaRegistrada) {
+            txtRutaFoto.text = "Evidencia registrada, imagen no disponible en este dispositivo"
+            imgEvidencia.visibility = View.GONE
+        } else {
+            txtRutaFoto.text = "Aún no hay evidencia registrada"
+            imgEvidencia.visibility = View.GONE
+        }
+    }
+
+    // Configura la pantalla para que el repartidor pueda tomar y guardar evidencia
+    private fun configurarModoRepartidor() {
+        verificarPermisoCamara()
+
+        // Solo el repartidor puede tomar fotografias
+        btnTomarFoto.setOnClickListener {
+            if (fotoMostrada) {
+                prepararNuevaFoto()
+            } else {
+                tomarFoto()
+            }
+        }
+
+        // Solo el repartidor puede guardar evidencia
+        btnGuardarEvidencia.setOnClickListener {
+            guardarEvidencia()
+        }
     }
 
     // Verifica si la app ya tiene permiso de camara
@@ -105,7 +140,8 @@ class EvidenciaActivity : ComponentActivity() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener({
-            val cameraProvider = cameraProviderFuture.get()
+            val provider = cameraProviderFuture.get()
+            cameraProvider = provider
 
             // Vista previa de la camara
             val preview = Preview.Builder().build().also {
@@ -120,10 +156,10 @@ class EvidenciaActivity : ComponentActivity() {
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             try {
-                cameraProvider.unbindAll()
+                provider.unbindAll()
 
                 // Une la camara al ciclo de vida de la pantalla
-                cameraProvider.bindToLifecycle(
+                provider.bindToLifecycle(
                     this,
                     cameraSelector,
                     preview,
@@ -222,7 +258,9 @@ class EvidenciaActivity : ComponentActivity() {
         previewCamara.visibility = View.GONE
         imgEvidencia.visibility = View.VISIBLE
 
-        btnTomarFoto.text = "Tomar otra foto"
+        if (modoPantalla == "repartidor") {
+            btnTomarFoto.text = "Tomar otra foto"
+        }
 
         Glide.with(this)
             .load(File(rutaFoto))
@@ -234,6 +272,8 @@ class EvidenciaActivity : ComponentActivity() {
     private fun mostrarFotoSiExiste() {
         if (DatosEntrega.rutaFotoEvidencia.isNotEmpty()) {
             mostrarFotoConGlide(DatosEntrega.rutaFotoEvidencia)
+        } else if (modoPantalla == "cliente") {
+            imgEvidencia.visibility = View.GONE
         }
     }
 
@@ -241,10 +281,16 @@ class EvidenciaActivity : ComponentActivity() {
     private fun actualizarTextoEvidencia() {
         txtEstadoEvidencia.text = "Estado: ${DatosEntrega.estadoPedido}"
 
-        txtRutaFoto.text = if (DatosEntrega.rutaFotoEvidencia.isEmpty()) {
-            "Foto: No registrada"
-        } else {
+        txtRutaFoto.text = if (DatosEntrega.evidenciaRegistrada) {
             "Foto registrada correctamente"
+        } else {
+            "Foto: No registrada"
         }
+    }
+
+    // Libera la camara al salir de la pantalla
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraProvider?.unbindAll()
     }
 }

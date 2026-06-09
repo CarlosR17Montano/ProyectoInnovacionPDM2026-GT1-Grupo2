@@ -38,6 +38,10 @@
         <activity android:name=".MapaActivity" />
         <activity android:name=".ClienteActivity" />
         <activity android:name=".RepartidorActivity" />
+        <activity android:name=".RegistroActivity" />
+        <activity android:name=".HistorialPedidosActivity" />
+        <activity android:name=".CrearPedidoActivity" />
+        <activity android:name=".SeleccionarUbicacionActivity" />
 
         <!-- Pantalla inicial de la aplicacion -->
         <activity
