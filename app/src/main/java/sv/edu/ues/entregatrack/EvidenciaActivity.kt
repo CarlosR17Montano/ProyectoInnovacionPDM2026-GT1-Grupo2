@@ -2,295 +2,414 @@ package sv.edu.ues.entregatrack
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Environment
-import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
-import com.bumptech.glide.Glide
-import java.io.File
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
+import java.io.ByteArrayOutputStream
 
+// Pantalla que permite registrar evidencias de recogida o entrega
 class EvidenciaActivity : ComponentActivity() {
 
-    private lateinit var previewCamara: PreviewView
+    // Controles visuales de la pantalla
     private lateinit var imgEvidencia: ImageView
     private lateinit var txtEstadoEvidencia: TextView
     private lateinit var txtRutaFoto: TextView
     private lateinit var btnTomarFoto: Button
     private lateinit var btnGuardarEvidencia: Button
+    private lateinit var btnVolverEvidencia: Button
 
-    private var imageCapture: ImageCapture? = null
-    private var cameraProvider: ProcessCameraProvider? = null
-    private var fotoMostrada: Boolean = false
+    // Imagen capturada temporalmente
+    private var bitmapEvidencia: Bitmap? = null
 
-    // Controla si la pantalla se abre como repartidor o cliente
-    private var modoPantalla: String = "repartidor"
+    // Código del pedido seleccionado
+    private var codigoPedidoActual: String = ""
 
-    // Solicita permiso de camara al usuario
-    private val solicitarPermisoCamara =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { permisoConcedido ->
-            if (permisoConcedido) {
-                iniciarCamara()
+    // Define si la evidencia es de recogida o entrega
+    private var tipoEvidencia: String = "entrega"
+
+    // Abre la aplicación de cámara y recibe una vista previa
+    private val tomarFotoLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.TakePicturePreview()
+        ) { bitmap ->
+
+            // Comprueba si se obtuvo una fotografía
+            if (bitmap != null) {
+
+                // Guarda temporalmente la fotografía
+                bitmapEvidencia = bitmap
+
+                // Muestra la fotografía en pantalla
+                imgEvidencia.setImageBitmap(bitmap)
+
+                // Cambia el mensaje según el tipo de evidencia
+                txtEstadoEvidencia.text =
+                    if (tipoEvidencia == "recogida") {
+                        "Evidencia de recogida capturada"
+                    } else {
+                        "Evidencia de entrega capturada"
+                    }
+
+                // Informa que la foto está lista para guardarse
+                txtRutaFoto.text =
+                    "Foto lista para guardar en Firebase Storage"
+
             } else {
-                Toast.makeText(this, "Permiso de camara denegado", Toast.LENGTH_SHORT).show()
+
+                // Informa cuando el usuario cancela la fotografía
+                Toast.makeText(
+                    this,
+                    "No se capturó ninguna foto",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
-    // Pantalla para tomar o visualizar evidencia fotografica
+    // Solicita el permiso de cámara durante la ejecución
+    private val solicitarPermisoCamaraLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { permisoConcedido ->
+
+            if (permisoConcedido) {
+
+                // Abre la cámara después de recibir autorización
+                tomarFotoLauncher.launch(null)
+
+            } else {
+
+                // Informa que la cámara necesita autorización
+                Toast.makeText(
+                    this,
+                    "Debes permitir el acceso a la cámara para registrar la evidencia",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
+    // Configura la pantalla cuando se abre
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Colores principales de la app
+        // Define los colores principales de la aplicación
         window.statusBarColor = Color.parseColor("#D81B60")
         window.navigationBarColor = Color.parseColor("#FFF3B0")
 
+        // Carga el diseño XML
         setContentView(R.layout.activity_evidencia)
 
-        previewCamara = findViewById(R.id.previewCamara)
+        // Relaciona los controles XML con Kotlin
         imgEvidencia = findViewById(R.id.imgEvidencia)
         txtEstadoEvidencia = findViewById(R.id.txtEstadoEvidencia)
         txtRutaFoto = findViewById(R.id.txtRutaFoto)
         btnTomarFoto = findViewById(R.id.btnTomarFoto)
         btnGuardarEvidencia = findViewById(R.id.btnGuardarEvidencia)
+        btnVolverEvidencia = findViewById(R.id.btnVolverEvidencia)
 
-        val btnVolverEvidencia = findViewById<Button>(R.id.btnVolverEvidencia)
+        // Recibe el código del pedido desde la pantalla anterior
+        codigoPedidoActual =
+            intent.getStringExtra("codigoPedido")
+                ?: DatosEntrega.codigoPedido
 
-        // Recibe si la pantalla se abre como cliente o repartidor
-        modoPantalla = intent.getStringExtra("modo") ?: "repartidor"
+        // Recibe el tipo de evidencia
+        tipoEvidencia =
+            intent.getStringExtra("tipoEvidencia")
+                ?: "entrega"
 
-        // Configura la pantalla segun el rol
-        if (modoPantalla == "cliente") {
-            configurarModoCliente()
-        } else {
-            configurarModoRepartidor()
+        // Configura los textos de la pantalla
+        configurarPantalla()
+
+        // Comprueba el permiso antes de abrir la cámara
+        btnTomarFoto.setOnClickListener {
+            abrirCamaraConPermiso()
+        }
+
+        // Guarda la evidencia en Firebase
+        btnGuardarEvidencia.setOnClickListener {
+            guardarEvidencia()
         }
 
         // Regresa a la pantalla anterior
         btnVolverEvidencia.setOnClickListener {
             finish()
         }
-
-        actualizarTextoEvidencia()
-        mostrarFotoSiExiste()
     }
 
-    // Configura la pantalla para que el cliente solo visualice la evidencia
-    // Configura la pantalla para que el cliente solo visualice la evidencia
-    private fun configurarModoCliente() {
-        previewCamara.visibility = View.GONE
-        btnTomarFoto.visibility = View.GONE
-        btnGuardarEvidencia.visibility = View.GONE
+    // Comprueba si la aplicación tiene permiso para usar la cámara
+    private fun abrirCamaraConPermiso() {
 
-        if (DatosEntrega.evidenciaRegistrada && DatosEntrega.rutaFotoEvidencia.isNotEmpty()) {
-            txtRutaFoto.text = "Evidencia registrada correctamente"
-            mostrarFotoConGlide(DatosEntrega.rutaFotoEvidencia)
-        } else if (DatosEntrega.evidenciaRegistrada) {
-            txtRutaFoto.text = "Evidencia registrada, imagen no disponible en este dispositivo"
-            imgEvidencia.visibility = View.GONE
+        // Consulta el estado actual del permiso
+        val permisoCamaraConcedido =
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+
+        if (permisoCamaraConcedido) {
+
+            // Abre la cámara si el permiso ya fue concedido
+            tomarFotoLauncher.launch(null)
+
         } else {
-            txtRutaFoto.text = "Aún no hay evidencia registrada"
-            imgEvidencia.visibility = View.GONE
+
+            // Solicita el permiso si todavía no fue concedido
+            solicitarPermisoCamaraLauncher.launch(
+                Manifest.permission.CAMERA
+            )
         }
     }
 
-    // Configura la pantalla para que el repartidor pueda tomar y guardar evidencia
-    private fun configurarModoRepartidor() {
-        verificarPermisoCamara()
+    // Ajusta los textos según el tipo de evidencia
+    private fun configurarPantalla() {
 
-        // Solo el repartidor puede tomar fotografias
-        btnTomarFoto.setOnClickListener {
-            if (fotoMostrada) {
-                prepararNuevaFoto()
-            } else {
-                tomarFoto()
-            }
-        }
+        if (tipoEvidencia == "recogida") {
 
-        // Solo el repartidor puede guardar evidencia
-        btnGuardarEvidencia.setOnClickListener {
-            guardarEvidencia()
-        }
-    }
+            // Configuración para evidencia de recogida
+            txtEstadoEvidencia.text =
+                "Registra evidencia de recogida del paquete"
 
-    // Verifica si la app ya tiene permiso de camara
-    private fun verificarPermisoCamara() {
-        val permiso = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            txtRutaFoto.text =
+                "Toma una foto que confirme que el paquete fue recibido"
 
-        if (permiso == PackageManager.PERMISSION_GRANTED) {
-            iniciarCamara()
+            btnGuardarEvidencia.text =
+                "Guardar evidencia de recogida"
+
         } else {
-            solicitarPermisoCamara.launch(Manifest.permission.CAMERA)
+
+            // Configuración para evidencia de entrega
+            txtEstadoEvidencia.text =
+                "Registra evidencia de entrega del paquete"
+
+            txtRutaFoto.text =
+                "Toma una foto que confirme la entrega del paquete"
+
+            btnGuardarEvidencia.text =
+                "Guardar evidencia de entrega"
         }
     }
 
-    // Inicia la vista previa de CameraX
-    private fun iniciarCamara() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-
-        cameraProviderFuture.addListener({
-            val provider = cameraProviderFuture.get()
-            cameraProvider = provider
-
-            // Vista previa de la camara
-            val preview = Preview.Builder().build().also {
-                it.setSurfaceProvider(previewCamara.surfaceProvider)
-            }
-
-            // Objeto para capturar fotografias
-            imageCapture = ImageCapture.Builder()
-                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-                .build()
-
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-            try {
-                provider.unbindAll()
-
-                // Une la camara al ciclo de vida de la pantalla
-                provider.bindToLifecycle(
-                    this,
-                    cameraSelector,
-                    preview,
-                    imageCapture
-                )
-            } catch (e: Exception) {
-                Toast.makeText(this, "No se pudo iniciar la camara", Toast.LENGTH_SHORT).show()
-            }
-
-        }, ContextCompat.getMainExecutor(this))
-    }
-
-    // Captura una foto y la guarda en almacenamiento de la app
-    private fun tomarFoto() {
-        val captura = imageCapture
-
-        if (captura == null) {
-            Toast.makeText(this, "La camara aun no esta lista", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val carpetaFotos = getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: filesDir
-        val archivoFoto = File(carpetaFotos, "evidencia_${System.currentTimeMillis()}.jpg")
-
-        val opcionesSalida = ImageCapture.OutputFileOptions.Builder(archivoFoto).build()
-
-        captura.takePicture(
-            opcionesSalida,
-            ContextCompat.getMainExecutor(this),
-            object : ImageCapture.OnImageSavedCallback {
-
-                // Se ejecuta cuando la foto se guarda correctamente
-                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    DatosEntrega.registrarEvidencia(archivoFoto.absolutePath)
-
-                    actualizarTextoEvidencia()
-                    mostrarFotoConGlide(archivoFoto.absolutePath)
-
-                    Toast.makeText(
-                        this@EvidenciaActivity,
-                        "Foto tomada correctamente",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-                // Se ejecuta si ocurre un error al tomar la foto
-                override fun onError(exception: ImageCaptureException) {
-                    Toast.makeText(
-                        this@EvidenciaActivity,
-                        "Error al tomar la foto",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        )
-    }
-
-    // Permite volver a mostrar la camara para capturar otra foto
-    private fun prepararNuevaFoto() {
-        fotoMostrada = false
-
-        imgEvidencia.visibility = View.GONE
-        previewCamara.visibility = View.VISIBLE
-
-        btnTomarFoto.text = "Tomar foto"
-        txtRutaFoto.text = "Foto: lista para nueva captura"
-    }
-
-    // Valida que exista foto y confirma la evidencia en Firebase
+    // Valida la fotografía antes de subirla
     private fun guardarEvidencia() {
-        if (DatosEntrega.rutaFotoEvidencia.isEmpty()) {
-            Toast.makeText(this, "Primero toma una fotografia", Toast.LENGTH_SHORT).show()
+
+        // Comprueba que exista un pedido seleccionado
+        if (codigoPedidoActual.isBlank()) {
+            Toast.makeText(
+                this,
+                "No hay pedido seleccionado",
+                Toast.LENGTH_SHORT
+            ).show()
+
             return
         }
 
-        // Registra evidencia localmente
-        DatosEntrega.registrarEvidencia(DatosEntrega.rutaFotoEvidencia)
-        actualizarTextoEvidencia()
-        mostrarFotoConGlide(DatosEntrega.rutaFotoEvidencia)
+        // Obtiene la fotografía capturada
+        val bitmap = bitmapEvidencia
 
-        // Sincroniza evidencia con Firebase
-        FirebaseEntregaHelper.guardarUbicacionPedido(
-            onSuccess = {
-                Toast.makeText(this, "Evidencia guardada en Firebase", Toast.LENGTH_SHORT).show()
+        // Evita guardar sin tomar una fotografía
+        if (bitmap == null) {
+            Toast.makeText(
+                this,
+                "Primero toma una foto de evidencia",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
+
+        // Informa que inició el proceso
+        txtEstadoEvidencia.text =
+            "Subiendo evidencia..."
+
+        // Evita presionar varias veces mientras se guarda
+        btnGuardarEvidencia.isEnabled = false
+        btnTomarFoto.isEnabled = false
+
+        // Envía la fotografía a Firebase Storage
+        subirEvidenciaStorage(
+            bitmap = bitmap,
+
+            onSuccess = { urlEvidencia ->
+                guardarUrlEvidenciaPedido(urlEvidencia)
             },
+
             onError = { mensaje ->
-                Toast.makeText(this, "Error Firebase: $mensaje", Toast.LENGTH_LONG).show()
+
+                // Habilita nuevamente los botones
+                btnGuardarEvidencia.isEnabled = true
+                btnTomarFoto.isEnabled = true
+
+                txtEstadoEvidencia.text =
+                    "Error al subir evidencia"
+
+                Toast.makeText(
+                    this,
+                    mensaje,
+                    Toast.LENGTH_LONG
+                ).show()
             }
         )
     }
 
-    // Muestra la foto guardada usando Glide
-    private fun mostrarFotoConGlide(rutaFoto: String) {
-        fotoMostrada = true
+    // Sube la fotografía a Firebase Storage
+    private fun subirEvidenciaStorage(
+        bitmap: Bitmap,
+        onSuccess: (String) -> Unit,
+        onError: (String) -> Unit
+    ) {
 
-        previewCamara.visibility = View.GONE
-        imgEvidencia.visibility = View.VISIBLE
+        // Obtiene el identificador del usuario autenticado
+        val uid =
+            FirebaseAuth.getInstance()
+                .currentUser
+                ?.uid
 
-        if (modoPantalla == "repartidor") {
-            btnTomarFoto.text = "Tomar otra foto"
+        // Valida que exista una sesión activa
+        if (uid.isNullOrBlank()) {
+            onError("No hay usuario autenticado")
+            return
         }
 
-        Glide.with(this)
-            .load(File(rutaFoto))
-            .centerCrop()
-            .into(imgEvidencia)
+        // Obtiene la referencia principal de Firebase Storage
+        val storageRef =
+            FirebaseStorage.getInstance().reference
+
+        // Crea un nombre diferente según el tipo de evidencia
+        val nombreArchivo =
+            if (tipoEvidencia == "recogida") {
+                "evidencia_recogida_${System.currentTimeMillis()}.jpg"
+            } else {
+                "evidencia_entrega_${System.currentTimeMillis()}.jpg"
+            }
+
+        // Define la carpeta donde se guardará la fotografía
+        val rutaStorage = storageRef.child(
+            "evidencias_pedidos/$codigoPedidoActual/$uid/$nombreArchivo"
+        )
+
+        // Convierte el Bitmap a un arreglo de bytes
+        val flujoBytes = ByteArrayOutputStream()
+
+        // Comprime la fotografía en formato JPEG
+        bitmap.compress(
+            Bitmap.CompressFormat.JPEG,
+            85,
+            flujoBytes
+        )
+
+        // Obtiene los bytes que se subirán
+        val datosFoto = flujoBytes.toByteArray()
+
+        // Libera el flujo utilizado
+        flujoBytes.close()
+
+        // Sube la fotografía a Firebase Storage
+        rutaStorage.putBytes(datosFoto)
+            .addOnSuccessListener {
+
+                // Obtiene la URL pública de descarga
+                rutaStorage.downloadUrl
+                    .addOnSuccessListener { uri ->
+                        onSuccess(uri.toString())
+                    }
+                    .addOnFailureListener { error ->
+                        onError(
+                            error.message
+                                ?: "No se pudo obtener la URL de evidencia"
+                        )
+                    }
+            }
+            .addOnFailureListener { error ->
+                onError(
+                    error.message
+                        ?: "No se pudo subir la evidencia"
+                )
+            }
     }
 
-    // Si ya existe una foto, la muestra al abrir la pantalla
-    private fun mostrarFotoSiExiste() {
-        if (DatosEntrega.rutaFotoEvidencia.isNotEmpty()) {
-            mostrarFotoConGlide(DatosEntrega.rutaFotoEvidencia)
-        } else if (modoPantalla == "cliente") {
-            imgEvidencia.visibility = View.GONE
-        }
-    }
+    // Guarda la URL de la evidencia en Realtime Database
+    private fun guardarUrlEvidenciaPedido(
+        urlEvidencia: String
+    ) {
 
-    // Actualiza los textos visibles en pantalla
-    private fun actualizarTextoEvidencia() {
-        txtEstadoEvidencia.text = "Estado: ${DatosEntrega.estadoPedido}"
+        FirebasePedidoHelper.guardarEvidenciaPedido(
+            codigoPedido = codigoPedidoActual,
+            tipoEvidencia = tipoEvidencia,
+            urlEvidencia = urlEvidencia,
 
-        txtRutaFoto.text = if (DatosEntrega.evidenciaRegistrada) {
-            "Foto registrada correctamente"
-        } else {
-            "Foto: No registrada"
-        }
-    }
+            onSuccess = {
 
-    // Libera la camara al salir de la pantalla
-    override fun onDestroy() {
-        super.onDestroy()
-        cameraProvider?.unbindAll()
+                if (tipoEvidencia == "recogida") {
+
+                    // Actualiza los datos temporales de recogida
+                    DatosEntrega.estadoPedido =
+                        "Paquete recogido"
+
+                    DatosEntrega.ultimaActualizacion =
+                        "El repartidor ya recibió el paquete y registró evidencia"
+
+                    txtEstadoEvidencia.text =
+                        "Evidencia de recogida guardada correctamente"
+
+                } else {
+
+                    // Actualiza los datos temporales de entrega
+                    DatosEntrega.estadoPedido =
+                        "Entregado"
+
+                    DatosEntrega.ultimaActualizacion =
+                        "El repartidor entregó el paquete y registró evidencia"
+
+                    DatosEntrega.evidenciaRegistrada =
+                        true
+
+                    DatosEntrega.rutaFotoEvidencia =
+                        urlEvidencia
+
+                    txtEstadoEvidencia.text =
+                        "Evidencia de entrega guardada correctamente"
+                }
+
+                // Muestra la URL almacenada
+                txtRutaFoto.text = urlEvidencia
+
+                // Mantiene bloqueado el botón para evitar duplicados
+                btnGuardarEvidencia.isEnabled = false
+
+                // Permite tomar otra foto solamente si fuera necesario
+                btnTomarFoto.isEnabled = true
+
+                // Informa que el proceso terminó correctamente
+                Toast.makeText(
+                    this,
+                    "Evidencia guardada correctamente",
+                    Toast.LENGTH_SHORT
+                ).show()
+            },
+
+            onError = { mensaje ->
+
+                // Habilita nuevamente los botones
+                btnGuardarEvidencia.isEnabled = true
+                btnTomarFoto.isEnabled = true
+
+                txtEstadoEvidencia.text =
+                    "Error al guardar evidencia"
+
+                Toast.makeText(
+                    this,
+                    mensaje,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        )
     }
 }

@@ -33,6 +33,18 @@
             android:gravity="center"
             android:layout_marginBottom="24dp" />
 
+        <Button
+            android:id="@+id/btnVerSolicitudesDisponibles"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Ver solicitudes disponibles"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#333333"
+            android:background="@drawable/bg_button_yellow"
+            android:layout_marginBottom="18dp" />
+
         <!-- Tarjeta del pedido -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -56,7 +68,7 @@
                 android:id="@+id/txtCodigoPedidoRepartidor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Código: PED-001"
+                android:text="Código: Sin pedido"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:textColor="#333333"
@@ -68,7 +80,7 @@
                 android:id="@+id/txtClienteRepartidor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cliente: Carlos Montano"
+                android:text="Cliente: No asignado"
                 android:textSize="17sp"
                 android:textColor="#333333"
                 android:background="@drawable/bg_input_accesible"
@@ -79,7 +91,7 @@
                 android:id="@+id/txtDireccionRepartidor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Dirección: San Vicente, El Salvador"
+                android:text="Dirección: No asignada"
                 android:textSize="17sp"
                 android:textColor="#333333"
                 android:background="@drawable/bg_input_accesible"
@@ -90,21 +102,69 @@
                 android:id="@+id/txtEstadoRepartidor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Estado: Pendiente"
+                android:text="Estado: Selecciona una solicitud disponible"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#D81B60"
+                android:background="@drawable/bg_input_accesible"
+                android:padding="10dp"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/txtGananciaRepartidor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ganancia estimada: $0.00"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#4A148C"
                 android:background="@drawable/bg_input_accesible"
                 android:padding="10dp" />
 
         </LinearLayout>
 
-        <!-- Botones de acciones -->
+        <!-- Flujo real del repartidor -->
         <Button
-            android:id="@+id/btnIniciarEntrega"
+            android:id="@+id/btnIrRecogerPaquete"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Iniciar entrega"
+            android:text="Ir a recoger paquete"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_button_pink"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnLleguePuntoRecogida"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Llegué al punto de recogida"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#333333"
+            android:background="@drawable/bg_button_yellow"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnConfirmarPaqueteRecogido"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Confirmar paquete recogido"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_button_dark_pink"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnIniciarRutaEntrega"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Iniciar ruta de entrega"
             android:textAllCaps="false"
             android:textStyle="bold"
             android:textSize="16sp"
@@ -128,7 +188,7 @@
             android:id="@+id/btnTomarEvidencia"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Tomar foto de evidencia"
+            android:text="Registrar evidencia de entrega"
             android:textAllCaps="false"
             android:textStyle="bold"
             android:textSize="16sp"
@@ -140,12 +200,13 @@
             android:id="@+id/btnFinalizarEntrega"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Finalizar entrega"
+            android:text="Finalizar solicitud"
             android:textAllCaps="false"
             android:textStyle="bold"
             android:textSize="16sp"
             android:textColor="#FFFFFF"
-            android:background="@drawable/bg_button_pink" />
+            android:background="@drawable/bg_button_pink"
+            android:layout_marginBottom="24dp" />
 
     </LinearLayout>
 
