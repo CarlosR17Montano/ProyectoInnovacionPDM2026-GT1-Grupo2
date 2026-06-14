@@ -5,67 +5,85 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import com.bumptech.glide.Glide
 import com.google.firebase.database.ValueEventListener
+import java.util.Locale
 
-// Pantalla que muestra al cliente el seguimiento de un pedido seleccionado
+// Muestra el detalle y seguimiento del pedido
 class ClienteActivity : ComponentActivity() {
 
-    // Controles que muestran la información del pedido
+    // Datos principales del pedido
     private lateinit var txtCodigoPedidoCliente: TextView
+    private lateinit var txtTipoServicioCliente: TextView
     private lateinit var txtNombreCliente: TextView
+    private lateinit var txtTelefonoCliente: TextView
     private lateinit var txtRepartidorCliente: TextView
+
+    // Direcciones del pedido
+    private lateinit var txtDireccionRecogidaCliente: TextView
     private lateinit var txtDireccionCliente: TextView
+    private lateinit var txtReferenciaCliente: TextView
+
+    // Información del mandado
+    private lateinit var txtDescripcionPedidoCliente: TextView
+    private lateinit var txtIndicacionesCliente: TextView
+    private lateinit var txtDistanciaPrecioCliente: TextView
+
+    // Estado del pedido
     private lateinit var txtEstadoCliente: TextView
     private lateinit var txtUltimaActualizacionCliente: TextView
     private lateinit var txtEvidenciaCliente: TextView
 
-    // Botones disponibles para el cliente
+    // Galería de imágenes
+    private lateinit var layoutGaleriaEvidencias: LinearLayout
+
+    // Anexo del cliente
+    private lateinit var imgAnexoClienteDetalle: ImageView
+    private lateinit var txtAnexoClienteEstado: TextView
+
+    // Evidencia de recogida
+    private lateinit var imgEvidenciaRecogidaDetalle: ImageView
+    private lateinit var txtEvidenciaRecogidaEstado: TextView
+
+    // Evidencia de entrega
+    private lateinit var imgEvidenciaEntregaDetalle: ImageView
+    private lateinit var txtEvidenciaEntregaEstado: TextView
+
+    // Botones de la pantalla
     private lateinit var btnVerUbicacion: Button
     private lateinit var btnVerEvidencia: Button
+    private lateinit var btnVolverHistorialCliente: Button
 
-    // Listener utilizado para observar cambios del pedido en Firebase
+    // Listener del seguimiento
     private var listenerFirebase: ValueEventListener? = null
 
-    // Código del pedido que está consultando el cliente
+    // Pedido seleccionado
     private var codigoPedidoActual: String = ""
+    private var pedidoActual: PedidoFirebase? = null
 
-    // Indica si el pedido seleccionado ya terminó
-    private var pedidoFinalizadoSeleccionado: Boolean = false
+    // Estados de la pantalla
+    private var pedidoFinalizadoSeleccionado = false
+    private var galeriaVisible = false
 
-    // Configura la pantalla cuando se abre
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Define los colores de las barras del sistema
         window.statusBarColor = Color.parseColor("#D81B60")
         window.navigationBarColor = Color.parseColor("#FFF3B0")
 
-        // Carga el diseño de la pantalla
         setContentView(R.layout.activity_cliente)
 
-        // Relaciona los botones del XML con Kotlin
-        btnVerUbicacion = findViewById(R.id.btnVerUbicacion)
-        btnVerEvidencia = findViewById(R.id.btnVerEvidencia)
+        inicializarControles()
 
-        // Relaciona los textos del XML con Kotlin
-        txtCodigoPedidoCliente = findViewById(R.id.txtCodigoPedidoCliente)
-        txtNombreCliente = findViewById(R.id.txtNombreCliente)
-        txtRepartidorCliente = findViewById(R.id.txtRepartidorCliente)
-        txtDireccionCliente = findViewById(R.id.txtDireccionCliente)
-        txtEstadoCliente = findViewById(R.id.txtEstadoCliente)
-        txtUltimaActualizacionCliente =
-            findViewById(R.id.txtUltimaActualizacionCliente)
-        txtEvidenciaCliente = findViewById(R.id.txtEvidenciaCliente)
-
-        // Recibe el código enviado desde el historial
         codigoPedidoActual =
             intent.getStringExtra("codigoPedido")
                 ?: DatosEntrega.codigoPedido
 
-        // Valida que se haya recibido un código
         if (codigoPedidoActual.isBlank()) {
             Toast.makeText(
                 this,
@@ -77,143 +95,380 @@ class ClienteActivity : ComponentActivity() {
             return
         }
 
-        // Consulta los datos reales del pedido
-        cargarPedidoSeleccionado(codigoPedidoActual)
-
-        // Abre el mapa para visualizar la ubicación del repartidor
+        // Abre el mapa del repartidor
         btnVerUbicacion.setOnClickListener {
-            val intentMapa = Intent(
-                this,
-                MapaActivity::class.java
-            )
-
-            // Indica que el mapa se abre en modo cliente
-            intentMapa.putExtra("modo", "cliente")
-
-            // Envía el pedido que debe mostrarse en el mapa
-            intentMapa.putExtra(
-                "codigoPedido",
-                codigoPedidoActual
-            )
-
-            startActivity(intentMapa)
+            abrirMapaPedido()
         }
 
-        // Abre la evidencia final en modo de solo lectura
+        // Muestra u oculta las imágenes
         btnVerEvidencia.setOnClickListener {
-            val intentEvidencia = Intent(
-                this,
-                EvidenciaActivity::class.java
-            )
+            alternarGaleria()
+        }
 
-            // Indica que el usuario solamente visualizará la evidencia
-            intentEvidencia.putExtra("modo", "cliente")
-
-            // Envía el pedido al que pertenece la evidencia
-            intentEvidencia.putExtra(
-                "codigoPedido",
-                codigoPedidoActual
-            )
-
-            // El cliente debe visualizar la evidencia de entrega
-            intentEvidencia.putExtra(
-                "tipoEvidencia",
-                "entrega"
-            )
-
-            startActivity(intentEvidencia)
+        // Regresa al historial
+        btnVolverHistorialCliente.setOnClickListener {
+            finish()
         }
     }
 
-    // Se ejecuta cuando la pantalla vuelve a estar visible
+    // Relaciona los controles con el XML
+    private fun inicializarControles() {
+        txtCodigoPedidoCliente = findViewById(R.id.txtCodigoPedidoCliente)
+        txtTipoServicioCliente = findViewById(R.id.txtTipoServicioCliente)
+        txtNombreCliente = findViewById(R.id.txtNombreCliente)
+        txtTelefonoCliente = findViewById(R.id.txtTelefonoCliente)
+        txtRepartidorCliente = findViewById(R.id.txtRepartidorCliente)
+
+        txtDireccionRecogidaCliente =
+            findViewById(R.id.txtDireccionRecogidaCliente)
+
+        txtDireccionCliente =
+            findViewById(R.id.txtDireccionCliente)
+
+        txtReferenciaCliente =
+            findViewById(R.id.txtReferenciaCliente)
+
+        txtDescripcionPedidoCliente =
+            findViewById(R.id.txtDescripcionPedidoCliente)
+
+        txtIndicacionesCliente =
+            findViewById(R.id.txtIndicacionesCliente)
+
+        txtDistanciaPrecioCliente =
+            findViewById(R.id.txtDistanciaPrecioCliente)
+
+        txtEstadoCliente =
+            findViewById(R.id.txtEstadoCliente)
+
+        txtUltimaActualizacionCliente =
+            findViewById(R.id.txtUltimaActualizacionCliente)
+
+        txtEvidenciaCliente =
+            findViewById(R.id.txtEvidenciaCliente)
+
+        layoutGaleriaEvidencias =
+            findViewById(R.id.layoutGaleriaEvidencias)
+
+        imgAnexoClienteDetalle =
+            findViewById(R.id.imgAnexoClienteDetalle)
+
+        txtAnexoClienteEstado =
+            findViewById(R.id.txtAnexoClienteEstado)
+
+        imgEvidenciaRecogidaDetalle =
+            findViewById(R.id.imgEvidenciaRecogidaDetalle)
+
+        txtEvidenciaRecogidaEstado =
+            findViewById(R.id.txtEvidenciaRecogidaEstado)
+
+        imgEvidenciaEntregaDetalle =
+            findViewById(R.id.imgEvidenciaEntregaDetalle)
+
+        txtEvidenciaEntregaEstado =
+            findViewById(R.id.txtEvidenciaEntregaEstado)
+
+        btnVerUbicacion =
+            findViewById(R.id.btnVerUbicacion)
+
+        btnVerEvidencia =
+            findViewById(R.id.btnVerEvidencia)
+
+        btnVolverHistorialCliente =
+            findViewById(R.id.btnVolverHistorialCliente)
+    }
+
     override fun onResume() {
         super.onResume()
 
-        // Solicita permiso para mostrar notificaciones
+        // Solicita permiso para notificaciones
         NotificacionesClienteHelper
             .solicitarPermisoNotificaciones(this)
 
-        // Inicia la escucha de notificaciones nuevas
+        // Escucha las notificaciones nuevas
         NotificacionesClienteHelper
             .iniciarEscucha(this)
 
-        // Refresca la información mostrada
-        if (::txtEstadoCliente.isInitialized) {
-            actualizarDatosPedido()
+        // Recarga el pedido y sus imágenes
+        if (codigoPedidoActual.isNotBlank()) {
+            cargarPedidoSeleccionado()
         }
     }
 
-    // Se ejecuta cuando el cliente sale temporalmente de la pantalla
     override fun onPause() {
         super.onPause()
 
-        // Detiene el listener de notificaciones para evitar duplicados
+        // Detiene las notificaciones temporales
         NotificacionesClienteHelper.detenerEscucha()
     }
 
-    // Carga el pedido seleccionado desde Firebase
-    private fun cargarPedidoSeleccionado(codigoPedido: String) {
+    // Consulta el pedido completo
+    private fun cargarPedidoSeleccionado() {
         FirebasePedidoHelper.cargarPedidoPorCodigo(
-            codigoPedido = codigoPedido,
+            codigoPedido = codigoPedidoActual,
 
             onSuccess = { pedido ->
+                pedidoActual = pedido
 
-                // Copia los datos del pedido al objeto temporal
                 FirebasePedidoHelper.aplicarPedidoADatosEntrega(
                     pedido
                 )
 
-                // Determina si el pedido ya terminó
                 pedidoFinalizadoSeleccionado =
                     pedido.finalizado ||
                             pedido.estadoPedido.equals(
                                 "Entregado",
-                                ignoreCase = true
+                                true
                             ) ||
                             pedido.estadoPedido.equals(
                                 "Finalizado",
-                                ignoreCase = true
+                                true
                             )
 
-                // Actualiza los textos de la pantalla
-                actualizarDatosPedido()
+                mostrarDatosPedido(pedido)
+                configurarImagenes(pedido)
 
-                // Escucha cambios en tiempo real solamente si sigue activo
                 if (!pedidoFinalizadoSeleccionado) {
                     iniciarEscuchaFirebase()
+                } else {
+                    FirebaseEntregaHelper.detenerEscuchaPedido(
+                        listenerFirebase
+                    )
+
+                    listenerFirebase = null
                 }
             },
 
             onError = { mensaje ->
-
-                // Muestra el error recibido desde Firebase
                 Toast.makeText(
                     this,
                     mensaje,
                     Toast.LENGTH_LONG
                 ).show()
-
-                // Muestra los datos temporales disponibles
-                actualizarDatosPedido()
             }
         )
     }
 
-    // Escucha los cambios de ubicación y estado del pedido
-    private fun iniciarEscuchaFirebase() {
+    // Muestra los datos del pedido
+    private fun mostrarDatosPedido(
+        pedido: PedidoFirebase
+    ) {
+        txtCodigoPedidoCliente.text =
+            "Pedido: ${pedido.codigoPedido}"
 
-        // Elimina cualquier listener anterior
+        txtTipoServicioCliente.text =
+            "Servicio: ${pedido.tipoServicio}"
+
+        txtNombreCliente.text =
+            "Cliente: ${pedido.clienteNombre}"
+
+        txtTelefonoCliente.text =
+            "Teléfono: ${pedido.telefonoCliente}"
+
+        txtRepartidorCliente.text =
+            "Repartidor: ${pedido.repartidorNombre}"
+
+        txtDireccionRecogidaCliente.text =
+            "Recoger en: ${pedido.direccionRecogida}"
+
+        txtDireccionCliente.text =
+            "Entregar en: ${pedido.direccionEntrega}"
+
+        txtReferenciaCliente.text =
+            "Referencia: ${
+                pedido.referenciaUbicacion.ifBlank {
+                    "Sin referencia adicional"
+                }
+            }"
+
+        txtDescripcionPedidoCliente.text =
+            "Mandado: ${pedido.descripcionPedido}"
+
+        txtIndicacionesCliente.text =
+            "Indicaciones: ${
+                pedido.indicacionesRepartidor.ifBlank {
+                    "Sin indicaciones adicionales"
+                }
+            }"
+
+        val distancia =
+            String.format(
+                Locale.getDefault(),
+                "%.2f",
+                pedido.distanciaKm
+            )
+
+        val precio =
+            String.format(
+                Locale.getDefault(),
+                "%.2f",
+                pedido.precioEstimado
+            )
+
+        txtDistanciaPrecioCliente.text =
+            "Distancia: $distancia km\nPrecio estimado: $$precio"
+
+        txtEstadoCliente.text =
+            "Estado actual: ${pedido.estadoPedido}"
+
+        txtUltimaActualizacionCliente.text =
+            "Última actualización: ${pedido.ultimaActualizacion}"
+
+        val cantidadImagenes =
+            contarImagenes(pedido)
+
+        txtEvidenciaCliente.text =
+            "Imágenes registradas: $cantidadImagenes de 3"
+
+        configurarBotones()
+    }
+
+    // Prepara las tres imágenes del pedido
+    private fun configurarImagenes(
+        pedido: PedidoFirebase
+    ) {
+        mostrarImagen(
+            url = pedido.urlAnexoCliente,
+            imageView = imgAnexoClienteDetalle,
+            textView = txtAnexoClienteEstado,
+            disponible = pedido.tipoAnexoCliente.ifBlank {
+                "Anexo agregado por el cliente"
+            },
+            noDisponible = "El cliente no agregó ningún anexo"
+        )
+
+        mostrarImagen(
+            url = pedido.urlEvidenciaRecogida,
+            imageView = imgEvidenciaRecogidaDetalle,
+            textView = txtEvidenciaRecogidaEstado,
+            disponible = "Foto tomada al recoger el paquete",
+            noDisponible = "La recogida todavía no tiene evidencia"
+        )
+
+        val urlEntrega =
+            pedido.urlEvidenciaEntrega.ifBlank {
+                pedido.rutaFotoEvidencia
+            }
+
+        mostrarImagen(
+            url = urlEntrega,
+            imageView = imgEvidenciaEntregaDetalle,
+            textView = txtEvidenciaEntregaEstado,
+            disponible = "Foto tomada al entregar el paquete",
+            noDisponible = "La entrega todavía no tiene evidencia"
+        )
+    }
+
+    // Carga una imagen usando Glide
+    private fun mostrarImagen(
+        url: String,
+        imageView: ImageView,
+        textView: TextView,
+        disponible: String,
+        noDisponible: String
+    ) {
+        if (url.isBlank()) {
+            Glide.with(this).clear(imageView)
+
+            imageView.setImageDrawable(null)
+            imageView.visibility = View.GONE
+            textView.text = noDisponible
+            return
+        }
+
+        imageView.visibility = View.VISIBLE
+        textView.text = disponible
+
+        Glide.with(this)
+            .load(url)
+            .placeholder(android.R.drawable.ic_menu_gallery)
+            .error(android.R.drawable.ic_menu_report_image)
+            .fitCenter()
+            .into(imageView)
+    }
+
+    // Cuenta las imágenes disponibles
+    private fun contarImagenes(
+        pedido: PedidoFirebase
+    ): Int {
+        var cantidad = 0
+
+        if (pedido.urlAnexoCliente.isNotBlank()) {
+            cantidad++
+        }
+
+        if (pedido.urlEvidenciaRecogida.isNotBlank()) {
+            cantidad++
+        }
+
+        if (
+            pedido.urlEvidenciaEntrega.isNotBlank() ||
+            pedido.rutaFotoEvidencia.isNotBlank()
+        ) {
+            cantidad++
+        }
+
+        return cantidad
+    }
+
+    // Muestra u oculta la galería
+    private fun alternarGaleria() {
+        if (pedidoActual == null) {
+            Toast.makeText(
+                this,
+                "El pedido todavía se está cargando",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
+
+        galeriaVisible = !galeriaVisible
+
+        layoutGaleriaEvidencias.visibility =
+            if (galeriaVisible) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+
+        btnVerEvidencia.text =
+            if (galeriaVisible) {
+                "Ocultar imágenes del pedido"
+            } else {
+                "Ver imágenes del pedido"
+            }
+    }
+
+    // Abre el seguimiento en el mapa
+    private fun abrirMapaPedido() {
+        val intentMapa =
+            Intent(
+                this,
+                MapaActivity::class.java
+            )
+
+        intentMapa.putExtra(
+            "modo",
+            "cliente"
+        )
+
+        intentMapa.putExtra(
+            "codigoPedido",
+            codigoPedidoActual
+        )
+
+        startActivity(intentMapa)
+    }
+
+    // Escucha cambios del pedido activo
+    private fun iniciarEscuchaFirebase() {
         FirebaseEntregaHelper.detenerEscuchaPedido(
             listenerFirebase
         )
 
-        // Inicia un nuevo listener para el pedido seleccionado
         listenerFirebase =
             FirebaseEntregaHelper.escucharUbicacionPedido(
-
                 onChange = { datos ->
-
-                    // Actualiza los datos temporales del pedido
                     DatosEntrega.estadoPedido =
                         datos.estadoPedido
 
@@ -232,34 +487,43 @@ class ClienteActivity : ComponentActivity() {
                     DatosEntrega.rutaFotoEvidencia =
                         datos.rutaFotoEvidencia
 
-                    // Comprueba si el pedido terminó
+                    txtEstadoCliente.text =
+                        "Estado actual: ${datos.estadoPedido}"
+
+                    txtUltimaActualizacionCliente.text =
+                        "Última actualización: ${datos.ultimaActualizacion}"
+
                     pedidoFinalizadoSeleccionado =
-                        DatosEntrega.estadoPedido.equals(
+                        datos.estadoPedido.equals(
                             "Entregado",
-                            ignoreCase = true
+                            true
                         ) ||
-                                DatosEntrega.estadoPedido.equals(
+                                datos.estadoPedido.equals(
                                     "Finalizado",
-                                    ignoreCase = true
+                                    true
                                 )
 
-                    // Actualiza la información visible
-                    actualizarDatosPedido()
+                    if (
+                        datos.evidenciaRegistrada &&
+                        pedidoActual
+                            ?.urlEvidenciaEntrega
+                            .isNullOrBlank()
+                    ) {
+                        cargarPedidoSeleccionado()
+                    }
 
-                    // Detiene la ubicación en tiempo real si terminó
+                    configurarBotones()
+
                     if (pedidoFinalizadoSeleccionado) {
-                        FirebaseEntregaHelper
-                            .detenerEscuchaPedido(
-                                listenerFirebase
-                            )
+                        FirebaseEntregaHelper.detenerEscuchaPedido(
+                            listenerFirebase
+                        )
 
                         listenerFirebase = null
                     }
                 },
 
                 onError = { mensaje ->
-
-                    // Informa si ocurre un error de lectura
                     Toast.makeText(
                         this,
                         "Error Firebase: $mensaje",
@@ -269,101 +533,27 @@ class ClienteActivity : ComponentActivity() {
             )
     }
 
-    // Coloca los datos actuales del pedido en los textos
-    private fun actualizarDatosPedido() {
-
-        // Muestra la información general del pedido
-        txtCodigoPedidoCliente.text =
-            "Pedido: ${DatosEntrega.codigoPedido}"
-
-        txtNombreCliente.text =
-            "Cliente: ${DatosEntrega.clientePedido}"
-
-        txtRepartidorCliente.text =
-            "Repartidor: ${DatosEntrega.repartidorPedido}"
-
-        txtDireccionCliente.text =
-            "Dirección: ${DatosEntrega.direccionPedido}"
-
-        // Muestra el estado y la última actualización
-        txtEstadoCliente.text =
-            "Estado actual: ${DatosEntrega.estadoPedido}"
-
-        txtUltimaActualizacionCliente.text =
-            "Última actualización: ${DatosEntrega.ultimaActualizacion}"
-
-        // Informa si ya existe evidencia final
-        txtEvidenciaCliente.text =
-            if (DatosEntrega.evidenciaRegistrada) {
-                "Evidencia registrada: Sí"
+    // Ajusta los botones por estado
+    private fun configurarBotones() {
+        btnVerUbicacion.visibility =
+            if (pedidoFinalizadoSeleccionado) {
+                View.GONE
             } else {
-                "Evidencia registrada: No"
+                View.VISIBLE
             }
 
-        // Ajusta los botones según el estado
-        configurarBotonesPorEstado()
+        btnVerEvidencia.visibility =
+            View.VISIBLE
     }
 
-    // Muestra u oculta botones según el estado del pedido
-    private fun configurarBotonesPorEstado() {
-
-        // Comprueba si el pedido ya terminó
-        val pedidoEntregado =
-            pedidoFinalizadoSeleccionado ||
-                    DatosEntrega.estadoPedido.equals(
-                        "Entregado",
-                        ignoreCase = true
-                    ) ||
-                    DatosEntrega.estadoPedido.equals(
-                        "Finalizado",
-                        ignoreCase = true
-                    )
-
-        if (pedidoEntregado) {
-
-            // Oculta el mapa porque ya no necesita seguimiento
-            btnVerUbicacion.visibility = View.GONE
-
-            // Muestra el botón solamente si existe evidencia
-            btnVerEvidencia.visibility =
-                if (DatosEntrega.evidenciaRegistrada) {
-                    View.VISIBLE
-                } else {
-                    View.GONE
-                }
-
-            // Cambia el texto del botón
-            btnVerEvidencia.text =
-                "Ver evidencia entregada"
-
-        } else {
-
-            // Permite ver la ubicación del pedido activo
-            btnVerUbicacion.visibility = View.VISIBLE
-
-            // Muestra evidencia solo cuando esté disponible
-            btnVerEvidencia.visibility =
-                if (DatosEntrega.evidenciaRegistrada) {
-                    View.VISIBLE
-                } else {
-                    View.GONE
-                }
-
-            btnVerEvidencia.text =
-                "Ver evidencia de entrega"
-        }
-    }
-
-    // Se ejecuta cuando la pantalla se destruye
     override fun onDestroy() {
         super.onDestroy()
 
-        // Elimina el listener del seguimiento del pedido
+        // Libera el listener de Firebase
         FirebaseEntregaHelper.detenerEscuchaPedido(
             listenerFirebase
         )
 
-        // Limpia la referencia local
         listenerFirebase = null
     }
 }

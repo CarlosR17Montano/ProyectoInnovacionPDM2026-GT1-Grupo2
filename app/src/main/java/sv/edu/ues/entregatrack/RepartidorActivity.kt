@@ -1,21 +1,28 @@
 package sv.edu.ues.entregatrack
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 
+// Gestiona el pedido asignado al repartidor
 class RepartidorActivity : ComponentActivity() {
 
+    // Información del pedido
     private lateinit var txtCodigoPedidoRepartidor: TextView
     private lateinit var txtClienteRepartidor: TextView
     private lateinit var txtDireccionRepartidor: TextView
     private lateinit var txtEstadoRepartidor: TextView
     private lateinit var txtGananciaRepartidor: TextView
 
+    // Botones del proceso
     private lateinit var btnIrRecogerPaquete: Button
     private lateinit var btnLleguePuntoRecogida: Button
     private lateinit var btnConfirmarPaqueteRecogido: Button
@@ -24,9 +31,38 @@ class RepartidorActivity : ComponentActivity() {
     private lateinit var btnTomarEvidencia: Button
     private lateinit var btnFinalizarEntrega: Button
 
+    // Código del pedido seleccionado
     private var codigoPedidoActual: String = ""
 
-    // Pantalla principal para que el repartidor gestione el pedido aceptado
+    // Solicita permisos de ubicación
+    private val solicitarPermisosUbicacionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permisos ->
+
+            val permisoPreciso =
+                permisos[Manifest.permission.ACCESS_FINE_LOCATION] == true
+
+            val permisoAproximado =
+                permisos[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+
+            if (permisoPreciso || permisoAproximado) {
+                iniciarServicioUbicacion()
+
+                Toast.makeText(
+                    this,
+                    "Seguimiento GPS automático iniciado",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    "Debes permitir la ubicación para compartir el recorrido",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -35,24 +71,53 @@ class RepartidorActivity : ComponentActivity() {
 
         setContentView(R.layout.activity_repartidor)
 
-        txtCodigoPedidoRepartidor = findViewById(R.id.txtCodigoPedidoRepartidor)
-        txtClienteRepartidor = findViewById(R.id.txtClienteRepartidor)
-        txtDireccionRepartidor = findViewById(R.id.txtDireccionRepartidor)
-        txtEstadoRepartidor = findViewById(R.id.txtEstadoRepartidor)
-        txtGananciaRepartidor = findViewById(R.id.txtGananciaRepartidor)
+        // Relaciona los textos
+        txtCodigoPedidoRepartidor =
+            findViewById(R.id.txtCodigoPedidoRepartidor)
 
-        val btnVerSolicitudesDisponibles = findViewById<Button>(R.id.btnVerSolicitudesDisponibles)
+        txtClienteRepartidor =
+            findViewById(R.id.txtClienteRepartidor)
 
-        btnIrRecogerPaquete = findViewById(R.id.btnIrRecogerPaquete)
-        btnLleguePuntoRecogida = findViewById(R.id.btnLleguePuntoRecogida)
-        btnConfirmarPaqueteRecogido = findViewById(R.id.btnConfirmarPaqueteRecogido)
-        btnIniciarRutaEntrega = findViewById(R.id.btnIniciarRutaEntrega)
-        btnActualizarUbicacion = findViewById(R.id.btnActualizarUbicacion)
-        btnTomarEvidencia = findViewById(R.id.btnTomarEvidencia)
-        btnFinalizarEntrega = findViewById(R.id.btnFinalizarEntrega)
+        txtDireccionRepartidor =
+            findViewById(R.id.txtDireccionRepartidor)
 
-        // Recibe el pedido real aceptado desde SolicitudesRepartidorActivity
-        codigoPedidoActual = intent.getStringExtra("codigoPedido") ?: ""
+        txtEstadoRepartidor =
+            findViewById(R.id.txtEstadoRepartidor)
+
+        txtGananciaRepartidor =
+            findViewById(R.id.txtGananciaRepartidor)
+
+        // Relaciona el botón de solicitudes
+        val btnVerSolicitudesDisponibles =
+            findViewById<Button>(
+                R.id.btnVerSolicitudesDisponibles
+            )
+
+        // Relaciona los botones del proceso
+        btnIrRecogerPaquete =
+            findViewById(R.id.btnIrRecogerPaquete)
+
+        btnLleguePuntoRecogida =
+            findViewById(R.id.btnLleguePuntoRecogida)
+
+        btnConfirmarPaqueteRecogido =
+            findViewById(R.id.btnConfirmarPaqueteRecogido)
+
+        btnIniciarRutaEntrega =
+            findViewById(R.id.btnIniciarRutaEntrega)
+
+        btnActualizarUbicacion =
+            findViewById(R.id.btnActualizarUbicacion)
+
+        btnTomarEvidencia =
+            findViewById(R.id.btnTomarEvidencia)
+
+        btnFinalizarEntrega =
+            findViewById(R.id.btnFinalizarEntrega)
+
+        // Recibe el pedido aceptado
+        codigoPedidoActual =
+            intent.getStringExtra("codigoPedido") ?: ""
 
         if (codigoPedidoActual.isNotBlank()) {
             cargarPedidoAsignado(codigoPedidoActual)
@@ -60,172 +125,375 @@ class RepartidorActivity : ComponentActivity() {
             mostrarSinPedido()
         }
 
-        // Abre solicitudes disponibles
+        // Abre las solicitudes disponibles
         btnVerSolicitudesDisponibles.setOnClickListener {
-            val intent = Intent(this, SolicitudesRepartidorActivity::class.java)
+            val intent =
+                Intent(
+                    this,
+                    SolicitudesRepartidorActivity::class.java
+                )
+
             startActivity(intent)
         }
 
-        // Estado: En camino a recogida
+        // Inicia el recorrido y el GPS automático
         btnIrRecogerPaquete.setOnClickListener {
             cambiarEstadoPedido(
                 nuevoEstado = "En camino a recogida",
-                mensaje = "El repartidor va en camino al punto de recogida",
+                mensaje =
+                    "El repartidor va en camino al punto de recogida",
                 finalizado = false
             )
         }
 
-        // Estado: En punto de recogida
+        // Confirma llegada al punto de recogida
         btnLleguePuntoRecogida.setOnClickListener {
             cambiarEstadoPedido(
                 nuevoEstado = "En punto de recogida",
-                mensaje = "El repartidor llegó al punto donde debe recoger el paquete",
+                mensaje =
+                    "El repartidor llegó al punto donde debe recoger el paquete",
                 finalizado = false
             )
         }
 
-        // Estado: Paquete recogido
+        // Confirma recogida y abre la evidencia
         btnConfirmarPaqueteRecogido.setOnClickListener {
-            cambiarEstadoPedido(
-                nuevoEstado = "Paquete recogido",
-                mensaje = "El repartidor ya recibió el paquete",
-                finalizado = false
+            if (codigoPedidoActual.isBlank()) {
+                Toast.makeText(
+                    this,
+                    "Primero acepta una solicitud",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            // El estado cambiará únicamente después de guardar la fotografía
+            val intent = Intent(
+                this,
+                EvidenciaActivity::class.java
             )
 
-            // Abrimos evidencia indicando que es evidencia de recogida
-            val intent = Intent(this, EvidenciaActivity::class.java)
             intent.putExtra("modo", "repartidor")
             intent.putExtra("codigoPedido", codigoPedidoActual)
             intent.putExtra("tipoEvidencia", "recogida")
+
             startActivity(intent)
         }
 
-        // Estado: En ruta al punto de entrega
+        // Inicia la ruta hacia la entrega
         btnIniciarRutaEntrega.setOnClickListener {
             cambiarEstadoPedido(
                 nuevoEstado = "En ruta al punto de entrega",
-                mensaje = "El repartidor ya va hacia el punto de entrega",
+                mensaje =
+                    "El repartidor ya va hacia el punto de entrega",
                 finalizado = false
             )
         }
 
-        // Actualiza ubicación GPS
+        // Abre el mapa como respaldo manual
         btnActualizarUbicacion.setOnClickListener {
             if (codigoPedidoActual.isBlank()) {
-                Toast.makeText(this, "Primero acepta una solicitud", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Primero acepta una solicitud",
+                    Toast.LENGTH_SHORT
+                ).show()
+
                 return@setOnClickListener
             }
 
-            val intent = Intent(this, MapaActivity::class.java)
+            val intent =
+                Intent(
+                    this,
+                    MapaActivity::class.java
+                )
+
             intent.putExtra("modo", "repartidor")
             intent.putExtra("codigoPedido", codigoPedidoActual)
+
             startActivity(intent)
         }
 
-        // Evidencia final de entrega
+        // Abre la evidencia final
         btnTomarEvidencia.setOnClickListener {
             if (codigoPedidoActual.isBlank()) {
-                Toast.makeText(this, "Primero acepta una solicitud", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Primero acepta una solicitud",
+                    Toast.LENGTH_SHORT
+                ).show()
+
                 return@setOnClickListener
             }
 
-            val intent = Intent(this, EvidenciaActivity::class.java)
+            val intent =
+                Intent(
+                    this,
+                    EvidenciaActivity::class.java
+                )
+
             intent.putExtra("modo", "repartidor")
             intent.putExtra("codigoPedido", codigoPedidoActual)
             intent.putExtra("tipoEvidencia", "entrega")
+
             startActivity(intent)
         }
 
-        // Finaliza la solicitud
+        // Finaliza el pedido y detiene el GPS
         btnFinalizarEntrega.setOnClickListener {
             cambiarEstadoPedido(
                 nuevoEstado = "Finalizado",
-                mensaje = "Solicitud finalizada. El paquete fue entregado correctamente",
+                mensaje =
+                    "Solicitud finalizada. El paquete fue entregado correctamente",
                 finalizado = true
             )
         }
     }
 
-    // Carga desde Firebase los datos reales del pedido aceptado
-    private fun cargarPedidoAsignado(codigoPedido: String) {
+    // Carga el pedido asignado desde Firebase
+    private fun cargarPedidoAsignado(
+        codigoPedido: String
+    ) {
         FirebasePedidoHelper.cargarPedidoPorCodigo(
             codigoPedido = codigoPedido,
+
             onSuccess = { pedido ->
 
-                val pedidoFinalizado = pedido.finalizado ||
-                        pedido.estadoPedido == "Entregado" ||
-                        pedido.estadoPedido == "Finalizado"
+                val pedidoFinalizado =
+                    pedido.finalizado ||
+                            pedido.estadoPedido.equals(
+                                "Entregado",
+                                ignoreCase = true
+                            ) ||
+                            pedido.estadoPedido.equals(
+                                "Finalizado",
+                                ignoreCase = true
+                            )
 
-                txtCodigoPedidoRepartidor.text = "Código: ${pedido.codigoPedido}"
+                txtCodigoPedidoRepartidor.text =
+                    "Código: ${pedido.codigoPedido}"
 
                 if (pedidoFinalizado) {
-                    // Por seguridad, ya no se muestran datos sensibles al finalizar
-                    txtClienteRepartidor.text = "Cliente: Información protegida"
-                    txtDireccionRepartidor.text = "Dirección: Información protegida"
+                    txtClienteRepartidor.text =
+                        "Cliente: Información protegida"
+
+                    txtDireccionRepartidor.text =
+                        "Dirección: Información protegida"
                 } else {
-                    txtClienteRepartidor.text = "Cliente: ${pedido.clienteNombre}"
-                    txtDireccionRepartidor.text = "Dirección: ${pedido.direccionEntrega}"
+                    txtClienteRepartidor.text =
+                        "Cliente: ${pedido.clienteNombre}"
+
+                    txtDireccionRepartidor.text =
+                        "Dirección: ${pedido.direccionEntrega}"
                 }
 
-                txtEstadoRepartidor.text = "Estado: ${pedido.estadoPedido}"
+                txtEstadoRepartidor.text =
+                    "Estado: ${pedido.estadoPedido}"
 
-                val ganancia = calcularGananciaRepartidor(pedido.precioEstimado)
+                val ganancia =
+                    calcularGananciaRepartidor(
+                        pedido.precioEstimado
+                    )
 
-                txtGananciaRepartidor.text = if (pedidoFinalizado) {
-                    "Ganancia final: $${String.format("%.2f", ganancia)}"
+                txtGananciaRepartidor.text =
+                    if (pedidoFinalizado) {
+                        "Ganancia final: $${String.format("%.2f", ganancia)}"
+                    } else {
+                        "Ganancia estimada: $${String.format("%.2f", ganancia)}"
+                    }
+
+                // Actualiza los datos temporales
+                FirebasePedidoHelper.aplicarPedidoADatosEntrega(
+                    pedido
+                )
+
+                // Configura los botones
+                actualizarBotonesSegunEstado(
+                    pedido.estadoPedido,
+                    pedidoFinalizado
+                )
+
+                // Detiene el GPS si el pedido terminó
+                if (pedidoFinalizado) {
+                    UbicacionRepartidorService.detener(this)
                 } else {
-                    "Ganancia estimada: $${String.format("%.2f", ganancia)}"
+                    reanudarSeguimientoSiCorresponde(
+                        pedido.estadoPedido
+                    )
                 }
-
-                // Actualiza datos temporales usados por mapa, evidencia y seguimiento
-                FirebasePedidoHelper.aplicarPedidoADatosEntrega(pedido)
-
-                actualizarBotonesSegunEstado(pedido.estadoPedido, pedidoFinalizado)
             },
+
             onError = { mensaje ->
-                Toast.makeText(this, mensaje, Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this,
+                    mensaje,
+                    Toast.LENGTH_LONG
+                ).show()
+
                 mostrarSinPedido()
             }
         )
     }
 
-    // Cambia estado real del pedido en Firebase y notifica al cliente
+    // Cambia el estado y controla el GPS
     private fun cambiarEstadoPedido(
         nuevoEstado: String,
         mensaje: String,
         finalizado: Boolean
     ) {
         if (codigoPedidoActual.isBlank()) {
-            Toast.makeText(this, "Primero acepta una solicitud", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                "Primero acepta una solicitud",
+                Toast.LENGTH_SHORT
+            ).show()
+
             return
         }
 
-        DatosEntrega.estadoPedido = nuevoEstado
-        DatosEntrega.ultimaActualizacion = mensaje
-        txtEstadoRepartidor.text = "Estado: $nuevoEstado"
+        DatosEntrega.estadoPedido =
+            nuevoEstado
+
+        DatosEntrega.ultimaActualizacion =
+            mensaje
+
+        txtEstadoRepartidor.text =
+            "Estado: $nuevoEstado"
 
         FirebasePedidoHelper.actualizarEstadoPedido(
             codigoPedido = codigoPedidoActual,
             nuevoEstado = nuevoEstado,
             mensajeActualizacion = mensaje,
             finalizado = finalizado,
+
             onSuccess = {
-                Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
-                cargarPedidoAsignado(codigoPedidoActual)
+
+                // Inicia el GPS al comenzar el recorrido
+                if (
+                    nuevoEstado == "En camino a recogida" ||
+                    nuevoEstado == "En ruta al punto de entrega"
+                ) {
+                    solicitarOIniciarSeguimiento()
+                }
+
+                // Detiene el GPS al terminar
+                if (
+                    finalizado ||
+                    nuevoEstado == "Entregado" ||
+                    nuevoEstado == "Finalizado" ||
+                    nuevoEstado == "Cancelado"
+                ) {
+                    UbicacionRepartidorService.detener(this)
+                }
+
+                Toast.makeText(
+                    this,
+                    mensaje,
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                cargarPedidoAsignado(
+                    codigoPedidoActual
+                )
             },
+
             onError = { error ->
-                Toast.makeText(this, "Error Firebase: $error", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this,
+                    "Error Firebase: $error",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         )
     }
 
-    // Muestra pantalla sin pedido seleccionado
+    // Comprueba permisos antes de iniciar el GPS
+    private fun solicitarOIniciarSeguimiento() {
+        val permisoPreciso =
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+        val permisoAproximado =
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+        if (permisoPreciso || permisoAproximado) {
+            iniciarServicioUbicacion()
+        } else {
+            solicitarPermisosUbicacionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+
+    // Inicia el servicio de ubicación
+    private fun iniciarServicioUbicacion() {
+        if (codigoPedidoActual.isBlank()) {
+            return
+        }
+
+        UbicacionRepartidorService.iniciar(
+            context = this,
+            codigoPedido = codigoPedidoActual
+        )
+    }
+
+    // Reinicia el GPS si el pedido sigue activo
+    private fun reanudarSeguimientoSiCorresponde(
+        estado: String
+    ) {
+        val estadoConSeguimiento =
+            estado == "En camino a recogida" ||
+                    estado == "En punto de recogida" ||
+                    estado == "Paquete recogido" ||
+                    estado == "En ruta al punto de entrega" ||
+                    estado == "Cerca del punto de entrega"
+
+        if (!estadoConSeguimiento) {
+            return
+        }
+
+        val permisoPreciso =
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+        val permisoAproximado =
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+        if (permisoPreciso || permisoAproximado) {
+            iniciarServicioUbicacion()
+        }
+    }
+
+    // Muestra la pantalla sin pedido
     private fun mostrarSinPedido() {
-        txtCodigoPedidoRepartidor.text = "Código: Sin pedido"
-        txtClienteRepartidor.text = "Cliente: No asignado"
-        txtDireccionRepartidor.text = "Dirección: No asignada"
-        txtEstadoRepartidor.text = "Estado: Selecciona una solicitud disponible"
-        txtGananciaRepartidor.text = "Ganancia estimada: $0.00"
+        txtCodigoPedidoRepartidor.text =
+            "Código: Sin pedido"
+
+        txtClienteRepartidor.text =
+            "Cliente: No asignado"
+
+        txtDireccionRepartidor.text =
+            "Dirección: No asignada"
+
+        txtEstadoRepartidor.text =
+            "Estado: Selecciona una solicitud disponible"
+
+        txtGananciaRepartidor.text =
+            "Ganancia estimada: $0.00"
 
         habilitarBoton(btnIrRecogerPaquete, false)
         habilitarBoton(btnLleguePuntoRecogida, false)
@@ -236,7 +504,7 @@ class RepartidorActivity : ComponentActivity() {
         habilitarBoton(btnFinalizarEntrega, false)
     }
 
-    // Controla qué botón puede usarse según el estado actual
+    // Configura los botones según el estado
     private fun actualizarBotonesSegunEstado(
         estado: String,
         pedidoFinalizado: Boolean
@@ -249,6 +517,7 @@ class RepartidorActivity : ComponentActivity() {
             habilitarBoton(btnActualizarUbicacion, false)
             habilitarBoton(btnTomarEvidencia, false)
             habilitarBoton(btnFinalizarEntrega, false)
+
             return
         }
 
@@ -262,63 +531,122 @@ class RepartidorActivity : ComponentActivity() {
 
         when (estado) {
             "Aceptado por repartidor" -> {
-                habilitarBoton(btnIrRecogerPaquete, true)
-                habilitarBoton(btnActualizarUbicacion, true)
+                habilitarBoton(
+                    btnIrRecogerPaquete,
+                    true
+                )
+
+                habilitarBoton(
+                    btnActualizarUbicacion,
+                    true
+                )
             }
 
             "En camino a recogida" -> {
-                habilitarBoton(btnLleguePuntoRecogida, true)
-                habilitarBoton(btnActualizarUbicacion, true)
+                habilitarBoton(
+                    btnLleguePuntoRecogida,
+                    true
+                )
+
+                habilitarBoton(
+                    btnActualizarUbicacion,
+                    true
+                )
             }
 
             "En punto de recogida" -> {
-                habilitarBoton(btnConfirmarPaqueteRecogido, true)
-                habilitarBoton(btnActualizarUbicacion, true)
+                habilitarBoton(
+                    btnConfirmarPaqueteRecogido,
+                    true
+                )
+
+                habilitarBoton(
+                    btnActualizarUbicacion,
+                    true
+                )
             }
 
             "Paquete recogido" -> {
-                habilitarBoton(btnIniciarRutaEntrega, true)
-                habilitarBoton(btnActualizarUbicacion, true)
+                habilitarBoton(
+                    btnIniciarRutaEntrega,
+                    true
+                )
+
+                habilitarBoton(
+                    btnActualizarUbicacion,
+                    true
+                )
             }
 
             "En ruta al punto de entrega",
             "Cerca del punto de entrega" -> {
-                habilitarBoton(btnActualizarUbicacion, true)
-                habilitarBoton(btnTomarEvidencia, true)
-                habilitarBoton(btnFinalizarEntrega, true)
+                habilitarBoton(
+                    btnActualizarUbicacion,
+                    true
+                )
+
+                habilitarBoton(
+                    btnTomarEvidencia,
+                    true
+                )
+
+                habilitarBoton(
+                    btnFinalizarEntrega,
+                    true
+                )
             }
 
             "Entregado" -> {
-                habilitarBoton(btnFinalizarEntrega, true)
+                habilitarBoton(
+                    btnFinalizarEntrega,
+                    true
+                )
             }
 
             else -> {
-                habilitarBoton(btnIrRecogerPaquete, true)
-                habilitarBoton(btnActualizarUbicacion, true)
+                habilitarBoton(
+                    btnIrRecogerPaquete,
+                    true
+                )
+
+                habilitarBoton(
+                    btnActualizarUbicacion,
+                    true
+                )
             }
         }
     }
 
-    // Habilita o deshabilita visualmente botones
+    // Cambia el estado visual del botón
     private fun habilitarBoton(
         boton: Button,
         habilitado: Boolean
     ) {
-        boton.isEnabled = habilitado
-        boton.alpha = if (habilitado) 1.0f else 0.45f
+        boton.isEnabled =
+            habilitado
+
+        boton.alpha =
+            if (habilitado) 1.0f else 0.45f
     }
 
-    // Fórmula simple de ganancia para el repartidor
-    private fun calcularGananciaRepartidor(precioEstimado: Double): Double {
+    // Calcula el 70 por ciento para el repartidor
+    private fun calcularGananciaRepartidor(
+        precioEstimado: Double
+    ): Double {
         return precioEstimado * 0.70
     }
 
-    // Refresca al regresar desde mapa o evidencia
     override fun onResume() {
         super.onResume()
 
-        if (::txtEstadoRepartidor.isInitialized && codigoPedidoActual.isNotBlank()) {
-            cargarPedidoAsignado(codigoPedidoActual)
+        // Actualiza el pedido al regresar
+        if (
+            ::txtEstadoRepartidor.isInitialized &&
+            codigoPedidoActual.isNotBlank()
+        ) {
+            cargarPedidoAsignado(
+                codigoPedidoActual
+            )
         }
     }
 }

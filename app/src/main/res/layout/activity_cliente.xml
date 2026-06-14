@@ -15,239 +15,376 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="📦 Detalle del pedido"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:textColor="#D81B60"
-            android:gravity="center"
             android:layout_marginTop="28dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:text="📦 Detalle del pedido"
+            android:textColor="#D81B60"
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
         <!-- Subtítulo -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Seguimiento de tu mandado en tiempo real"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            android:textColor="#4A148C"
+            android:layout_marginBottom="24dp"
             android:gravity="center"
-            android:layout_marginBottom="24dp" />
+            android:text="Seguimiento de tu mandado en tiempo real"
+            android:textColor="#4A148C"
+            android:textSize="17sp"
+            android:textStyle="bold" />
 
-        <!-- Tarjeta principal del pedido -->
+        <!-- Datos principales -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/bg_card_login"
             android:elevation="8dp"
-            android:padding="20dp"
-            android:layout_marginBottom="20dp">
+            android:orientation="vertical"
+            android:padding="20dp">
 
             <TextView
                 android:id="@+id/txtCodigoPedidoCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:text="Pedido:"
-                android:textSize="21sp"
-                android:textStyle="bold"
                 android:textColor="#212121"
-                android:layout_marginBottom="10dp" />
+                android:textSize="21sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/txtTipoServicioCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:text="Servicio:"
-                android:textSize="17sp"
-                android:textStyle="bold"
                 android:textColor="#333333"
-                android:layout_marginBottom="8dp" />
+                android:textSize="17sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/txtNombreCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:text="Cliente:"
-                android:textSize="17sp"
                 android:textColor="#333333"
-                android:layout_marginBottom="8dp" />
+                android:textSize="17sp" />
 
             <TextView
                 android:id="@+id/txtTelefonoCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:text="Teléfono:"
-                android:textSize="17sp"
                 android:textColor="#333333"
-                android:layout_marginBottom="8dp" />
+                android:textSize="17sp" />
 
             <TextView
                 android:id="@+id/txtRepartidorCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Repartidor:"
-                android:textSize="17sp"
-                android:textColor="#333333" />
+                android:textColor="#333333"
+                android:textSize="17sp" />
 
         </LinearLayout>
 
-        <!-- Tarjeta de ubicaciones -->
+        <!-- Ubicaciones -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/bg_card_login"
             android:elevation="8dp"
-            android:padding="20dp"
-            android:layout_marginBottom="20dp">
+            android:orientation="vertical"
+            android:padding="20dp">
 
             <TextView
                 android:id="@+id/txtDireccionRecogidaCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:text="Recoger en:"
-                android:textSize="17sp"
-                android:textStyle="bold"
                 android:textColor="#333333"
-                android:layout_marginBottom="10dp" />
+                android:textSize="17sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/txtDireccionCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:text="Entregar en:"
-                android:textSize="17sp"
-                android:textStyle="bold"
                 android:textColor="#333333"
-                android:layout_marginBottom="10dp" />
+                android:textSize="17sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/txtReferenciaCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Referencia:"
-                android:textSize="17sp"
-                android:textColor="#333333" />
+                android:textColor="#333333"
+                android:textSize="17sp" />
 
         </LinearLayout>
 
-        <!-- Tarjeta de mandado -->
+        <!-- Información del mandado -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/bg_card_login"
             android:elevation="8dp"
-            android:padding="20dp"
-            android:layout_marginBottom="20dp">
+            android:orientation="vertical"
+            android:padding="20dp">
 
             <TextView
                 android:id="@+id/txtDescripcionPedidoCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:text="Mandado:"
-                android:textSize="17sp"
-                android:textStyle="bold"
                 android:textColor="#333333"
-                android:layout_marginBottom="10dp" />
+                android:textSize="17sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/txtIndicacionesCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:text="Indicaciones:"
-                android:textSize="17sp"
                 android:textColor="#333333"
-                android:layout_marginBottom="10dp" />
+                android:textSize="17sp" />
 
             <TextView
                 android:id="@+id/txtDistanciaPrecioCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Distancia y precio:"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#D81B60"
                 android:background="@drawable/bg_input_accesible"
-                android:padding="12dp" />
+                android:padding="12dp"
+                android:text="Distancia y precio:"
+                android:textColor="#D81B60"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
-        <!-- Tarjeta de estado -->
+        <!-- Estado del pedido -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_marginBottom="22dp"
             android:background="@drawable/bg_card_login"
             android:elevation="8dp"
-            android:padding="20dp"
-            android:layout_marginBottom="22dp">
+            android:orientation="vertical"
+            android:padding="20dp">
 
             <TextView
                 android:id="@+id/txtEstadoCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:text="Estado actual:"
-                android:textSize="21sp"
-                android:textStyle="bold"
                 android:textColor="#D81B60"
-                android:layout_marginBottom="10dp" />
+                android:textSize="21sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/txtUltimaActualizacionCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:text="Última actualización:"
-                android:textSize="16sp"
                 android:textColor="#333333"
-                android:layout_marginBottom="10dp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/txtEvidenciaCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Evidencia registrada:"
+                android:text="Imágenes registradas:"
+                android:textColor="#4A148C"
                 android:textSize="17sp"
-                android:textStyle="bold"
-                android:textColor="#4A148C" />
+                android:textStyle="bold" />
 
         </LinearLayout>
 
-        <!-- Botón para ver mapa -->
+        <!-- Botón del mapa -->
         <Button
             android:id="@+id/btnVerUbicacion"
             android:layout_width="match_parent"
             android:layout_height="56dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_button_yellow"
             android:text="Ver ubicación del repartidor"
             android:textAllCaps="false"
-            android:textStyle="bold"
             android:textColor="#333333"
-            android:background="@drawable/bg_button_yellow"
-            android:layout_marginBottom="12dp" />
+            android:textStyle="bold" />
 
-        <!-- Botón para ver evidencia -->
+        <!-- Botón de imágenes -->
         <Button
             android:id="@+id/btnVerEvidencia"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Ver evidencia de entrega"
-            android:textAllCaps="false"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
+            android:layout_marginBottom="16dp"
             android:background="@drawable/bg_button_pink"
-            android:layout_marginBottom="12dp" />
+            android:text="Ver imágenes del pedido"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+
+        <!-- Galería del pedido -->
+        <LinearLayout
+            android:id="@+id/layoutGaleriaEvidencias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- Anexo del cliente -->
+            <LinearLayout
+                android:id="@+id/layoutAnexoCliente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_card_login"
+                android:elevation="8dp"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="1. Anexo agregado por el cliente"
+                    android:textColor="#4A148C"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/imgAnexoClienteDetalle"
+                    android:layout_width="match_parent"
+                    android:layout_height="260dp"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/bg_input_accesible"
+                    android:contentDescription="Anexo agregado por el cliente"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/txtAnexoClienteEstado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="10dp"
+                    android:text="Anexo no disponible"
+                    android:textColor="#555555"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <!-- Evidencia de recogida -->
+            <LinearLayout
+                android:id="@+id/layoutEvidenciaRecogida"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_card_login"
+                android:elevation="8dp"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="2. Evidencia de recogida"
+                    android:textColor="#4A148C"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/imgEvidenciaRecogidaDetalle"
+                    android:layout_width="match_parent"
+                    android:layout_height="260dp"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/bg_input_accesible"
+                    android:contentDescription="Evidencia de recogida"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/txtEvidenciaRecogidaEstado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="10dp"
+                    android:text="Evidencia de recogida no disponible"
+                    android:textColor="#555555"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <!-- Evidencia de entrega -->
+            <LinearLayout
+                android:id="@+id/layoutEvidenciaEntrega"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_card_login"
+                android:elevation="8dp"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="3. Evidencia final de entrega"
+                    android:textColor="#4A148C"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/imgEvidenciaEntregaDetalle"
+                    android:layout_width="match_parent"
+                    android:layout_height="260dp"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/bg_input_accesible"
+                    android:contentDescription="Evidencia final de entrega"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/txtEvidenciaEntregaEstado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="10dp"
+                    android:text="Evidencia de entrega no disponible"
+                    android:textColor="#555555"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <!-- Botón volver -->
         <Button
             android:id="@+id/btnVolverHistorialCliente"
             android:layout_width="match_parent"
             android:layout_height="56dp"
+            android:background="@drawable/bg_button_dark_pink"
             android:text="Volver a mis pedidos"
             android:textAllCaps="false"
-            android:textStyle="bold"
             android:textColor="#FFFFFF"
-            android:background="@drawable/bg_button_dark_pink" />
+            android:textStyle="bold" />
 
     </LinearLayout>
 
